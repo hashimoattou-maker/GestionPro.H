@@ -120,31 +120,5 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({ error: 'Erreur lors de la désactivation de l\'utilisateur' });
     }
 });
-router.post('/cleanup-all-data', async (req, res) => {
-    if (req.user.role !== 'admin') {
-        res.status(403).json({ error: 'Accès interdit' });
-        return;
-    }
-    const conn = await database_1.default.getConnection();
-    try {
-        await conn.beginTransaction();
-        await conn.execute('DELETE FROM stock_movements');
-        await conn.execute('DELETE FROM document_lines');
-        await conn.execute('DELETE FROM payments');
-        await conn.execute('UPDATE documents SET client_id = NULL, supplier_id = NULL');
-        await conn.execute('DELETE FROM products');
-        await conn.execute('DELETE FROM clients');
-        await conn.execute('DELETE FROM suppliers');
-        await conn.commit();
-        res.json({ message: 'Tous les produits, clients et fournisseurs ont été supprimés' });
-    }
-    catch (err) {
-        await conn.rollback();
-        res.status(500).json({ error: 'Erreur lors de la suppression' });
-    }
-    finally {
-        conn.release();
-    }
-});
 exports.default = router;
 //# sourceMappingURL=users.js.map
