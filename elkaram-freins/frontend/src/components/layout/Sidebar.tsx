@@ -232,7 +232,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
             </svg>
           </div>
           <div>
-            <h1 className="text-sm font-semibold">EL Karam Freins</h1>
+            <h1 className="text-sm font-semibold">GestionPRO</h1>
             <p className="text-xs text-muted-foreground">SARL</p>
           </div>
         </div>

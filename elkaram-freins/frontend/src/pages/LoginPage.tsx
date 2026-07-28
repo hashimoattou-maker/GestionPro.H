@@ -36,7 +36,7 @@ export default function LoginPage() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary">
             <span className="text-3xl font-bold text-primary-foreground">KF</span>
           </div>
-          <CardTitle className="text-2xl">EL Karam Freins</CardTitle>
+          <CardTitle className="text-2xl">GestionPRO</CardTitle>
           <CardDescription>SARL - Gestion de stock et facturation</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>

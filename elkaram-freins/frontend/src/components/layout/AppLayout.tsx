@@ -35,7 +35,7 @@ export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const basePath = "/" + location.pathname.split("/").slice(1, 3).join("/");
-  const title = pageTitles[location.pathname] || pageTitles[basePath] || "EL Karam Freins";
+  const title = pageTitles[location.pathname] || pageTitles[basePath] || "GestionPRO";
 
   return (
     <div className="flex h-screen overflow-hidden">
