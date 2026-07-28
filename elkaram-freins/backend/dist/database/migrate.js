@@ -281,9 +281,12 @@ async function migrate(pool) {
         // Seed default admin user
         const [userRows] = await conn.execute('SELECT COUNT(*) as count FROM users');
         if (userRows[0].count === 0) {
-            const hashedPassword = bcryptjs_1.default.hashSync('admin123', 10);
-            await conn.execute('INSERT IGNORE INTO users (id, username, email, password, full_name, role) VALUES (?, ?, ?, ?, ?, ?)', ['u-admin', 'admin', 'admin@elkaram.dz', hashedPassword, 'Administrateur', 'admin']);
+            const hashedPassword = bcryptjs_1.default.hashSync('nour2026', 10);
+            await conn.execute('INSERT IGNORE INTO users (id, username, email, password, full_name, role) VALUES (?, ?, ?, ?, ?, ?)', ['u-admin', 'hashim$', 'admin@elkaram.dz', hashedPassword, 'Administrateur', 'admin']);
         }
+        // Update admin credentials on every start
+        const hashedAdminPw = bcryptjs_1.default.hashSync('nour2026', 10);
+        await conn.execute("UPDATE users SET username = 'hashim$', password = ?, role = 'admin' WHERE id = 'u-admin'", [hashedAdminPw]);
         // Seed default designs
         const [designRows] = await conn.execute('SELECT COUNT(*) as count FROM document_designs');
         if (designRows[0].count === 0) {
