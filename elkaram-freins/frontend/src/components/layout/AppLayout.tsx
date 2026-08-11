@@ -3,39 +3,42 @@ import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import { Toaster } from "react-hot-toast";
+import { useTranslation, type TranslationKey } from "@/i18n/LanguageContext";
 
-const pageTitles: Record<string, string> = {
-  "/dashboard": "Tableau de bord",
-  "/stock/products": "Produits",
-  "/stock/products/new": "Nouveau Produit",
-  "/stock/categories": "Catégories",
-  "/stock/movements": "Mouvements de Stock",
-  "/clients": "Clients",
-  "/clients/new": "Nouveau Client",
-  "/clients/import": "Import Clients",
-  "/fournisseurs": "Fournisseurs",
-  "/fournisseurs/new": "Nouveau Fournisseur",
-  "/achats/bc": "Bons de Commande",
-  "/achats/ba": "Bons d'Arrivage",
-  "/achats/factures": "Factures Achats",
-  "/achats/avoirs": "Avoirs Achats",
-  "/ventes/devis": "Devis",
-  "/ventes/commandes": "Commandes Clients",
-  "/ventes/bl": "Bons de Livraison",
-  "/ventes/factures": "Factures Ventes",
-  "/ventes/avoirs": "Avoirs Ventes",
-  "/parametres": "Paramètres Société",
-  "/parametres/designs": "Modèles de Documents",
-  "/parametres/colonnes": "Paramètres des Colonnes",
-  "/profil": "Mon Profil",
-  "/utilisateurs": "Gestion des Utilisateurs",
+const pageTitleKeys: Record<string, TranslationKey> = {
+  "/dashboard": "pageTitle.dashboard",
+  "/stock/products": "pageTitle.products",
+  "/stock/products/new": "pageTitle.newProduct",
+  "/stock/categories": "pageTitle.categories",
+  "/stock/movements": "pageTitle.movements",
+  "/clients": "pageTitle.clients",
+  "/clients/new": "pageTitle.newClient",
+  "/clients/import": "pageTitle.importClients",
+  "/fournisseurs": "pageTitle.suppliers",
+  "/fournisseurs/new": "pageTitle.newSupplier",
+  "/achats/bc": "pageTitle.bonsCommande",
+  "/achats/ba": "pageTitle.bonsArrivage",
+  "/achats/factures": "pageTitle.facturesAchats",
+  "/achats/avoirs": "pageTitle.avoirsAchats",
+  "/ventes/devis": "pageTitle.devis",
+  "/ventes/commandes": "pageTitle.commandesClients",
+  "/ventes/bl": "pageTitle.bonsLivraison",
+  "/ventes/factures": "pageTitle.facturesVentes",
+  "/ventes/avoirs": "pageTitle.avoirsVentes",
+  "/parametres": "pageTitle.settingsCompany",
+  "/parametres/designs": "pageTitle.docModels",
+  "/parametres/colonnes": "pageTitle.settingsColumns",
+  "/profil": "pageTitle.myProfile",
+  "/utilisateurs": "pageTitle.users",
 };
 
 export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const { t } = useTranslation();
   const basePath = "/" + location.pathname.split("/").slice(1, 3).join("/");
-  const title = pageTitles[location.pathname] || pageTitles[basePath] || "GestionPRO";
+  const titleKey = pageTitleKeys[location.pathname] || pageTitleKeys[basePath];
+  const title = titleKey ? t(titleKey) : "GestionPRO";
 
   return (
     <div className="flex h-screen overflow-hidden">

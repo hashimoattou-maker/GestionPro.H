@@ -23,6 +23,7 @@ import {
   Calculator,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/i18n/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 
 interface SidebarProps {
@@ -40,6 +41,7 @@ interface NavItem {
 
 export default function Sidebar({ open, onClose }: SidebarProps) {
   const { isAdmin } = useAuth();
+  const { t, language, setLanguage: setLang } = useTranslation();
   const location = useLocation();
   const [expandedMenus, setExpandedMenus] = React.useState<string[]>(["stock", "ventes", "achats"]);
 
@@ -54,68 +56,68 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
   const navItems: (NavItem & { key: string })[] = [
     {
       key: "dashboard",
-      label: "Tableau de bord",
+      label: t("sidebar.dashboard"),
       icon: <LayoutDashboard className="h-5 w-5" />,
       path: "/dashboard",
     },
     {
       key: "stock",
-      label: "Stock",
+      label: t("sidebar.stock"),
       icon: <Package className="h-5 w-5" />,
       children: [
-        { label: "Produits", icon: <Boxes className="h-4 w-4" />, path: "/stock/products" },
-        { label: "Catégories", icon: <Tags className="h-4 w-4" />, path: "/stock/categories" },
-        { label: "Mouvements", icon: <FileBarChart className="h-4 w-4" />, path: "/stock/movements" },
+        { label: t("sidebar.products"), icon: <Boxes className="h-4 w-4" />, path: "/stock/products" },
+        { label: t("sidebar.categories"), icon: <Tags className="h-4 w-4" />, path: "/stock/categories" },
+        { label: t("sidebar.movements"), icon: <FileBarChart className="h-4 w-4" />, path: "/stock/movements" },
       ],
     },
     {
       key: "clients",
-      label: "Clients",
+      label: t("sidebar.clients"),
       icon: <Users className="h-5 w-5" />,
       children: [
-        { label: "Liste", icon: <Users className="h-4 w-4" />, path: "/clients" },
-        { label: "Import Excel", icon: <Import className="h-4 w-4" />, path: "/clients/import" },
+        { label: t("sidebar.list"), icon: <Users className="h-4 w-4" />, path: "/clients" },
+        { label: t("sidebar.importExcel"), icon: <Import className="h-4 w-4" />, path: "/clients/import" },
       ],
     },
     {
       key: "fournisseurs",
-      label: "Fournisseurs",
+      label: t("sidebar.suppliers"),
       icon: <Truck className="h-5 w-5" />,
       children: [
-        { label: "Liste", icon: <Truck className="h-4 w-4" />, path: "/fournisseurs" },
+        { label: t("sidebar.list"), icon: <Truck className="h-4 w-4" />, path: "/fournisseurs" },
       ],
     },
     {
       key: "achats",
-      label: "Achats",
+      label: t("sidebar.purchases"),
       icon: <ShoppingCart className="h-5 w-5" />,
       children: [
-        { label: "Bons de Commande", icon: <FileText className="h-4 w-4" />, path: "/achats/bc" },
-        { label: "Bons d'Arrivage", icon: <FileSpreadsheet className="h-4 w-4" />, path: "/achats/ba" },
-        { label: "Factures Achats", icon: <Receipt className="h-4 w-4" />, path: "/achats/factures" },
-        { label: "Avoirs Achats", icon: <FileCheck className="h-4 w-4" />, path: "/achats/avoirs" },
+        { label: t("sidebar.bonsCommande"), icon: <FileText className="h-4 w-4" />, path: "/achats/bc" },
+        { label: t("sidebar.bonsArrivage"), icon: <FileSpreadsheet className="h-4 w-4" />, path: "/achats/ba" },
+        { label: t("sidebar.facturesAchats"), icon: <Receipt className="h-4 w-4" />, path: "/achats/factures" },
+        { label: t("sidebar.avoirsAchats"), icon: <FileCheck className="h-4 w-4" />, path: "/achats/avoirs" },
       ],
     },
     {
       key: "ventes",
-      label: "Ventes",
+      label: t("sidebar.sales"),
       icon: <Calculator className="h-5 w-5" />,
       children: [
-        { label: "Devis", icon: <ScrollText className="h-4 w-4" />, path: "/ventes/devis" },
-        { label: "Commandes Clients", icon: <FileText className="h-4 w-4" />, path: "/ventes/commandes" },
-        { label: "Bons de Livraison", icon: <FileSpreadsheet className="h-4 w-4" />, path: "/ventes/bl" },
-        { label: "Factures Ventes", icon: <Receipt className="h-4 w-4" />, path: "/ventes/factures" },
-        { label: "Avoirs Ventes", icon: <FileCheck className="h-4 w-4" />, path: "/ventes/avoirs" },
+        { label: t("sidebar.devis"), icon: <ScrollText className="h-4 w-4" />, path: "/ventes/devis" },
+        { label: t("sidebar.commandesClients"), icon: <FileText className="h-4 w-4" />, path: "/ventes/commandes" },
+        { label: t("sidebar.bonsLivraison"), icon: <FileSpreadsheet className="h-4 w-4" />, path: "/ventes/bl" },
+        { label: t("sidebar.facturesVentes"), icon: <Receipt className="h-4 w-4" />, path: "/ventes/factures" },
+        { label: t("sidebar.avoirsVentes"), icon: <FileCheck className="h-4 w-4" />, path: "/ventes/avoirs" },
       ],
     },
     {
       key: "parametres",
-      label: "Paramètres",
+      label: t("sidebar.settings"),
       icon: <Settings className="h-5 w-5" />,
       children: [
-        { label: "Société", icon: <Building2 className="h-4 w-4" />, path: "/parametres" },
-        { label: "Modèles Documents", icon: <FileText className="h-4 w-4" />, path: "/parametres/designs" },
-        { label: "Colonnes", icon: <FileSpreadsheet className="h-4 w-4" />, path: "/parametres/colonnes" },
+        { label: t("sidebar.company"), icon: <Building2 className="h-4 w-4" />, path: "/parametres" },
+        { label: t("sidebar.docModels"), icon: <FileText className="h-4 w-4" />, path: "/parametres/designs" },
+        { label: t("sidebar.columns"), icon: <FileSpreadsheet className="h-4 w-4" />, path: "/parametres/colonnes" },
       ],
     },
   ];
@@ -123,7 +125,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
   if (isAdmin) {
     navItems.push({
       key: "utilisateurs",
-      label: "Utilisateurs",
+      label: t("sidebar.users"),
       icon: <UserCog className="h-5 w-5" />,
       path: "/utilisateurs",
     });
@@ -233,13 +235,29 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
           </div>
           <div>
             <h1 className="text-sm font-semibold">GestionPRO</h1>
-            <p className="text-xs text-muted-foreground">SARL</p>
+            <p className="text-xs text-muted-foreground">{t("sidebar.sarl")}</p>
           </div>
         </div>
         <div className="flex-1 min-h-0 overflow-y-auto sidebar-scroll px-3 py-4">
           <nav className="space-y-1.5">
             {navItems.map(renderNavItem)}
           </nav>
+        </div>
+        <div className="px-3 py-3 border-t border-border">
+          <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
+            <button
+              onClick={() => setLang("fr")}
+              className={`flex-1 text-xs py-1.5 rounded-md font-medium transition-colors ${language === "fr" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              FR
+            </button>
+            <button
+              onClick={() => setLang("en")}
+              className={`flex-1 text-xs py-1.5 rounded-md font-medium transition-colors ${language === "en" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              EN
+            </button>
+          </div>
         </div>
       </aside>
     </>

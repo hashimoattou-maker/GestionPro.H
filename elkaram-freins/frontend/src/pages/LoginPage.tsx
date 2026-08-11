@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -13,6 +14,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const { login, loading } = useAuth();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,9 +24,9 @@ export default function LoginPage() {
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
         const axiosErr = err as { response?: { data?: { message?: string } } };
-        setError(axiosErr.response?.data?.message || "Identifiants incorrects");
+        setError(axiosErr.response?.data?.message || t("login.invalidCredentials"));
       } else {
-        setError("Erreur de connexion au serveur");
+        setError(t("login.serverError"));
       }
     }
   };
@@ -34,10 +36,10 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="space-y-1 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary">
-            <span className="text-3xl font-bold text-primary-foreground">KF</span>
+            <span className="text-3xl font-bold text-primary-foreground">GP</span>
           </div>
-          <CardTitle className="text-2xl">GestionPRO</CardTitle>
-          <CardDescription>SARL - Gestion de stock et facturation</CardDescription>
+          <CardTitle className="text-2xl">{t("login.title")}</CardTitle>
+          <CardDescription>{t("login.subtitle")}</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -47,22 +49,22 @@ export default function LoginPage() {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="username">Nom d'utilisateur</Label>
+              <Label htmlFor="username">{t("login.username")}</Label>
               <Input
                 id="username"
-                placeholder="Entrez votre nom d'utilisateur"
+                placeholder={t("login.usernamePlaceholder")}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password">{t("login.password")}</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Entrez votre mot de passe"
+                  placeholder={t("login.passwordPlaceholder")}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -84,7 +86,7 @@ export default function LoginPage() {
               ) : (
                 <LogIn className="mr-2 h-4 w-4" />
               )}
-              {loading ? "Connexion..." : "Se connecter"}
+              {loading ? t("login.connecting") : t("login.login")}
             </Button>
           </CardFooter>
         </form>
