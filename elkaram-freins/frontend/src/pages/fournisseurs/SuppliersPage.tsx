@@ -23,10 +23,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { suppliers as suppliersApi } from "@/lib/api";
+import { useTranslation } from "@/i18n/LanguageContext";
 import { formatCurrency } from "@/lib/utils";
 import type { Supplier } from "@/types";
 
 export default function SuppliersPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [supplierList, setSupplierList] = useState<Supplier[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,19 +85,19 @@ export default function SuppliersPage() {
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Fournisseurs</CardTitle>
+          <CardTitle>{t("suppliers.title")}</CardTitle>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={handleExport}>
               <FileDown className="mr-2 h-4 w-4" />
-              Exporter
+              {t("common.export")}
             </Button>
             <Button variant="outline" size="sm" onClick={() => navigate("/fournisseurs/import")}>
               <Upload className="mr-2 h-4 w-4" />
-              Importer
+              {t("common.import")}
             </Button>
             <Button size="sm" onClick={() => navigate("/fournisseurs/new")}>
               <Plus className="mr-2 h-4 w-4" />
-              Nouveau Fournisseur
+              {t("suppliers.new")}
             </Button>
           </div>
         </CardHeader>
@@ -103,7 +105,7 @@ export default function SuppliersPage() {
           <div className="relative mb-4">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Rechercher un fournisseur..."
+              placeholder={t("suppliers.search")}
               className="pl-8"
               value={search}
               onChange={(e) => {
@@ -116,12 +118,12 @@ export default function SuppliersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Nom</TableHead>
-                  <TableHead>Société</TableHead>
-                  <TableHead>Téléphone</TableHead>
-                  <TableHead>Solde</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t("common.code")}</TableHead>
+                  <TableHead>{t("common.name")}</TableHead>
+                  <TableHead>{t("common.company")}</TableHead>
+                  <TableHead>{t("common.phone")}</TableHead>
+                  <TableHead>{t("common.balance")}</TableHead>
+                  <TableHead>{t("common.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -134,7 +136,7 @@ export default function SuppliersPage() {
                 ) : supplierList.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                      Aucun fournisseur trouvé
+                      {t("common.noResults")}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -183,10 +185,10 @@ export default function SuppliersPage() {
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
               >
-                Précédent
+                {t("common.previous")}
               </Button>
               <span className="text-sm text-muted-foreground">
-                Page {page} sur {totalPages}
+                {t("common.pageOf", { page, totalPages })}
               </span>
               <Button
                 variant="outline"
@@ -194,7 +196,7 @@ export default function SuppliersPage() {
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => p + 1)}
               >
-                Suivant
+                {t("common.next")}
               </Button>
             </div>
           )}
@@ -204,15 +206,15 @@ export default function SuppliersPage() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+            <AlertDialogTitle>{t("common.confirmDelete")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Êtes-vous sûr de vouloir supprimer ce fournisseur ?
+              {t("common.confirmDeleteSupplier")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-red-600">
-              Supprimer
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

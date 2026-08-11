@@ -31,10 +31,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { products, categories } from "@/lib/api";
+import { useTranslation } from "@/i18n/LanguageContext";
 import { formatCurrency } from "@/lib/utils";
 import type { Product, Category } from "@/types";
 
 export default function ProductsPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [productList, setProductList] = useState<Product[]>([]);
   const [allCategories, setAllCategories] = useState<Category[]>([]);
@@ -100,19 +102,19 @@ export default function ProductsPage() {
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Produits</CardTitle>
+          <CardTitle>{t("products.title")}</CardTitle>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={() => navigate("/stock/products/import")}>
               <Upload className="mr-2 h-4 w-4" />
-              Importer
+              {t("common.import")}
             </Button>
             <Button variant="outline" size="sm" onClick={handleExport}>
               <FileDown className="mr-2 h-4 w-4" />
-              Exporter
+              {t("common.export")}
             </Button>
             <Button size="sm" onClick={() => navigate("/stock/products/new")}>
               <Plus className="mr-2 h-4 w-4" />
-              Nouveau Produit
+              {t("products.new")}
             </Button>
           </div>
         </CardHeader>
@@ -121,7 +123,7 @@ export default function ProductsPage() {
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Rechercher un produit..."
+                placeholder={t("products.search")}
                 className="pl-8"
                 value={search}
                 onChange={(e) => {
@@ -138,10 +140,10 @@ export default function ProductsPage() {
               }}
             >
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Catégorie" />
+                <SelectValue placeholder={t("products.category")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Toutes</SelectItem>
+                <SelectItem value="all">{t("products.allCategories")}</SelectItem>
                 {allCategories.map((cat) => (
                   <SelectItem key={cat.id} value={String(cat.id)}>
                     {cat.name}
@@ -155,14 +157,14 @@ export default function ProductsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Référence</TableHead>
-                  <TableHead>Nom</TableHead>
-                  <TableHead>Catégorie</TableHead>
-                  <TableHead>Code-barres</TableHead>
-                  <TableHead>Prix Achat</TableHead>
-                  <TableHead>Prix Vente</TableHead>
-                  <TableHead>Stock</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t("products.reference")}</TableHead>
+                  <TableHead>{t("common.name")}</TableHead>
+                  <TableHead>{t("products.category")}</TableHead>
+                  <TableHead>{t("products.barcode")}</TableHead>
+                  <TableHead>{t("products.purchasePrice")}</TableHead>
+                  <TableHead>{t("products.sellingPrice")}</TableHead>
+                  <TableHead>{t("products.stock")}</TableHead>
+                  <TableHead>{t("common.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -175,7 +177,7 @@ export default function ProductsPage() {
                 ) : productList.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                      Aucun produit trouvé
+                      {t("common.noResults")}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -251,10 +253,10 @@ export default function ProductsPage() {
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
               >
-                Précédent
+                {t("common.previous")}
               </Button>
               <span className="text-sm text-muted-foreground">
-                Page {page} sur {totalPages}
+                {t("common.pageOf", { page, totalPages })}
               </span>
               <Button
                 variant="outline"
@@ -262,7 +264,7 @@ export default function ProductsPage() {
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => p + 1)}
               >
-                Suivant
+                {t("common.next")}
               </Button>
             </div>
           )}
@@ -272,15 +274,15 @@ export default function ProductsPage() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+            <AlertDialogTitle>{t("common.confirmDelete")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible.
+              {t("common.confirmDeleteProduct")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-red-600">
-              Supprimer
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

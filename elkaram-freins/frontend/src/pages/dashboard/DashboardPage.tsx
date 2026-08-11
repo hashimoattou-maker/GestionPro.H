@@ -4,6 +4,7 @@ import { Package, Users, Truck, AlertTriangle, TrendingUp, DollarSign, FileText 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/i18n/LanguageContext";
 import { dashboard } from "@/lib/api";
 import { formatCurrency, formatDate, getStatusBadge, getDocTypeLabel } from "@/lib/utils";
 import type { DashboardStats } from "@/types";
@@ -18,6 +19,7 @@ import {
 } from "recharts";
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,7 +30,7 @@ export default function DashboardPage() {
     dashboard
       .getStats()
       .then(setStats)
-      .catch((e) => setError(e.message || "Erreur de chargement"))
+      .catch((e) => setError(e.message || t("misc.error")))
       .finally(() => setLoading(false));
   }, []);
 
@@ -43,13 +45,13 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="max-w-xl mx-auto mt-12 p-6 bg-red-50 border border-red-200 rounded-lg">
-        <h2 className="text-lg font-bold text-red-700 mb-2">Erreur Dashboard</h2>
+        <h2 className="text-lg font-bold text-red-700 mb-2">{t("misc.error")}</h2>
         <p className="text-sm text-red-600 whitespace-pre-wrap">{error}</p>
         <button
           onClick={() => { setError(""); setLoading(true); dashboard.getStats().then(setStats).catch((e) => setError(e.message)).finally(() => setLoading(false)); }}
           className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
         >
-          Réessayer
+          {t("misc.retry")}
         </button>
       </div>
     );
@@ -58,14 +60,14 @@ export default function DashboardPage() {
   if (!stats) {
     return (
       <div className="text-center py-12 text-muted-foreground">
-        Aucune donnée disponible
+        {t("misc.noData")}
       </div>
     );
   }
 
   const statCards = [
     {
-      title: "Produits",
+      title: t("dashboard.products"),
       value: stats.totalProducts,
       icon: Package,
       color: "text-blue-600",
@@ -73,7 +75,7 @@ export default function DashboardPage() {
       link: "/stock/products",
     },
     {
-      title: "Clients",
+      title: t("dashboard.clients"),
       value: stats.totalClients,
       icon: Users,
       color: "text-green-600",
@@ -81,7 +83,7 @@ export default function DashboardPage() {
       link: "/clients",
     },
     {
-      title: "Fournisseurs",
+      title: t("dashboard.suppliers"),
       value: stats.totalSuppliers,
       icon: Truck,
       color: "text-purple-600",
@@ -89,7 +91,7 @@ export default function DashboardPage() {
       link: "/fournisseurs",
     },
     {
-      title: "Stock Faible",
+      title: t("dashboard.lowStock"),
       value: stats.lowStockCount,
       icon: AlertTriangle,
       color: "text-red-600",
@@ -97,7 +99,7 @@ export default function DashboardPage() {
       link: "/stock/products",
     },
     {
-      title: "Revenu Total",
+      title: t("dashboard.totalRevenue"),
       value: formatCurrency(stats.totalRevenue),
       icon: DollarSign,
       color: "text-emerald-600",
@@ -105,7 +107,7 @@ export default function DashboardPage() {
       link: "/ventes/factures",
     },
     {
-      title: "Factures Impayées",
+      title: t("dashboard.unpaidInvoices"),
       value: stats.pendingInvoices,
       icon: FileText,
       color: "text-orange-600",
@@ -141,7 +143,7 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              Revenus Mensuels
+              {t("dashboard.monthlyRevenue")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -163,7 +165,7 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5 text-primary" />
-              Documents Récents
+              {t("dashboard.recentDocuments")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -199,7 +201,7 @@ export default function DashboardPage() {
               ))}
               {(!stats.recentDocuments || stats.recentDocuments.length === 0) && (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  Aucun document récent
+                  {t("dashboard.noRecentDocs")}
                 </p>
               )}
             </div>
@@ -212,7 +214,7 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Package className="h-5 w-5 text-primary" />
-              Meilleurs Produits
+              {t("dashboard.topProducts")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -229,14 +231,14 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold">{product.totalSold} vendus</p>
+                    <p className="text-sm font-semibold">{product.totalSold} {t("dashboard.sold")}</p>
                     <p className="text-xs text-muted-foreground">{formatCurrency(product.totalRevenue)}</p>
                   </div>
                 </div>
               ))}
               {(!stats.topProducts || stats.topProducts.length === 0) && (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  Aucune vente enregistrée
+                  {t("dashboard.noSales")}
                 </p>
               )}
             </div>
@@ -247,7 +249,7 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-red-500" />
-              Alertes Stock Faible
+              {t("dashboard.lowStockAlerts")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -259,17 +261,17 @@ export default function DashboardPage() {
                 >
                   <div>
                     <p className="text-sm font-medium">{product.name}</p>
-                    <p className="text-xs text-muted-foreground">Réf: {product.reference}</p>
+                    <p className="text-xs text-muted-foreground">{t("dashboard.ref")} {product.reference}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-bold text-red-600">{product.stock} {product.unit}</p>
-                    <p className="text-xs text-muted-foreground">Min: {product.minStock}</p>
+                    <p className="text-xs text-muted-foreground">{t("dashboard.min")} {product.minStock}</p>
                   </div>
                 </div>
               ))}
               {(!stats.lowStockProducts || stats.lowStockProducts.length === 0) && (
                 <p className="text-sm text-green-600 text-center py-4">
-                  Tous les stocks sont suffisants
+                  {t("dashboard.allStocksOk")}
                 </p>
               )}
             </div>
@@ -281,7 +283,7 @@ export default function DashboardPage() {
               className="w-full"
               onClick={() => navigate("/stock/products")}
             >
-              Voir tous les produits
+              {t("dashboard.viewAllProducts")}
             </Button>
           </div>
         </Card>

@@ -22,10 +22,12 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { stock as stockApi } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
+import { useTranslation } from "@/i18n/LanguageContext";
 import type { StockMovement } from "@/types";
 
 export default function StockMovementsPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [movements, setMovements] = useState<StockMovement[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -70,16 +72,16 @@ export default function StockMovementsPage() {
         <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h2 className="text-2xl font-bold">Mouvements de Stock</h2>
+        <h2 className="text-2xl font-bold">{t("stock.title")}</h2>
       </div>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Historique des Mouvements</CardTitle>
+          <CardTitle>{t("stock.movementsHistory")}</CardTitle>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={handleExport}>
               <Download className="mr-2 h-4 w-4" />
-              Rapport
+              {t("common.report")}
             </Button>
           </div>
         </CardHeader>
@@ -88,7 +90,7 @@ export default function StockMovementsPage() {
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Rechercher..."
+                placeholder={t("common.search") + "..."}
                 className="pl-8"
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
@@ -96,13 +98,13 @@ export default function StockMovementsPage() {
             </div>
             <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v); setPage(1); }}>
               <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Type" />
+                <SelectValue placeholder={t("common.type")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous</SelectItem>
-                <SelectItem value="entrée">Entrée</SelectItem>
-                <SelectItem value="sortie">Sortie</SelectItem>
-                <SelectItem value="ajustement">Ajustement</SelectItem>
+                <SelectItem value="all">{t("common.all")}</SelectItem>
+                <SelectItem value="entrée">{t("stock.entry")}</SelectItem>
+                <SelectItem value="sortie">{t("stock.exit")}</SelectItem>
+                <SelectItem value="ajustement">{t("stock.adjustment")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -111,14 +113,14 @@ export default function StockMovementsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Produit</TableHead>
-                  <TableHead>Référence</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Quantité</TableHead>
-                  <TableHead>Stock Avant</TableHead>
-                  <TableHead>Stock Après</TableHead>
-                  <TableHead>Raison</TableHead>
+                  <TableHead>{t("common.date")}</TableHead>
+                  <TableHead>{t("stock.product")}</TableHead>
+                  <TableHead>{t("common.reference")}</TableHead>
+                  <TableHead>{t("common.type")}</TableHead>
+                  <TableHead>{t("common.quantity")}</TableHead>
+                  <TableHead>{t("stock.stockBefore")}</TableHead>
+                  <TableHead>{t("stock.stockAfter")}</TableHead>
+                  <TableHead>{t("stock.reason")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -131,7 +133,7 @@ export default function StockMovementsPage() {
                 ) : movements.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                      Aucun mouvement trouvé
+                      {t("stock.noMovements")}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -151,10 +153,10 @@ export default function StockMovementsPage() {
                           }
                         >
                           {mov.type === "entrée"
-                            ? "Entrée"
+                            ? t("stock.entry")
                             : mov.type === "sortie"
-                            ? "Sortie"
-                            : "Ajustement"}
+                            ? t("stock.exit")
+                            : t("stock.adjustment")}
                         </Badge>
                       </TableCell>
                       <TableCell className="font-medium">{mov.quantity}</TableCell>
@@ -171,11 +173,11 @@ export default function StockMovementsPage() {
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 mt-4">
               <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
-                Précédent
+                {t("common.previous")}
               </Button>
-              <span className="text-sm text-muted-foreground">Page {page} sur {totalPages}</span>
+              <span className="text-sm text-muted-foreground">{t("common.pageOf", { page, totalPages })}</span>
               <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
-                Suivant
+                {t("common.next")}
               </Button>
             </div>
           )}

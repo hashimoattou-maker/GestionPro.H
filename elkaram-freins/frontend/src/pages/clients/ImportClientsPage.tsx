@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { clients as clientsApi } from "@/lib/api";
 import * as XLSX from "xlsx";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 interface ImportRow {
   code?: string;
@@ -18,6 +19,7 @@ interface ImportRow {
 
 export default function ImportClientsPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<ImportRow[]>([]);
   const [importing, setImporting] = useState(false);
@@ -47,7 +49,7 @@ export default function ImportClientsPage() {
         }));
         setPreview(mapped.slice(0, 10));
       } catch {
-        setError("Erreur de lecture du fichier");
+        setError(t("common.fileReadError"));
       }
     };
     reader.readAsArrayBuffer(f);
@@ -74,14 +76,14 @@ export default function ImportClientsPage() {
         <Button variant="ghost" size="icon" onClick={() => navigate("/clients")}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h2 className="text-2xl font-bold">Import Clients depuis Excel</h2>
+        <h2 className="text-2xl font-bold">{t("pageTitle.importClients")}</h2>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Upload className="h-5 w-5" />
-            Fichier Excel
+            {t("common.excelFile")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -91,10 +93,10 @@ export default function ImportClientsPage() {
           >
             <FileSpreadsheet className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
             <p className="text-sm font-medium">
-              {file ? file.name : "Cliquez pour sélectionner un fichier Excel"}
+              {file ? file.name : t("common.clickToSelectExcel")}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Formats acceptés: .xlsx, .xls
+              {t("common.acceptedFormats")}
             </p>
             <input
               id="file-upload"
@@ -115,18 +117,18 @@ export default function ImportClientsPage() {
           {preview.length > 0 && (
             <>
               <div className="text-xs text-muted-foreground bg-muted p-2 rounded">
-                Colonnes détectées: {preview[0]._rawKeys}
+                {t("common.detectedColumns")}: {preview[0]._rawKeys}
               </div>
               <div>
-                <h3 className="text-sm font-medium mb-2">Aperçu ({preview.length} premières lignes)</h3>
+                <h3 className="text-sm font-medium mb-2">{t("common.preview")} ({preview.length} {t("common.firstRows")})</h3>
                 <div className="rounded-md border overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-muted">
-                        <th className="px-3 py-2 text-left">Code</th>
-                        <th className="px-3 py-2 text-left">Nom</th>
-                        <th className="px-3 py-2 text-left">Société</th>
-                        <th className="px-3 py-2 text-left">Téléphone</th>
+                        <th className="px-3 py-2 text-left">{t("common.code")}</th>
+                        <th className="px-3 py-2 text-left">{t("common.name")}</th>
+                        <th className="px-3 py-2 text-left">{t("common.company")}</th>
+                        <th className="px-3 py-2 text-left">{t("common.phone")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -149,7 +151,7 @@ export default function ImportClientsPage() {
                 ) : (
                   <Upload className="mr-2 h-4 w-4" />
                 )}
-                {importing ? "Importation..." : "Importer"}
+                {importing ? t("common.importing") : t("common.import")}
               </Button>
             </>
           )}
@@ -158,14 +160,14 @@ export default function ImportClientsPage() {
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-green-600 bg-green-50 p-3 rounded-md">
                 <CheckCircle className="h-4 w-4" />
-                <span className="text-sm font-medium">Importation terminée</span>
+                <span className="text-sm font-medium">{t("common.importComplete")}</span>
               </div>
               <div className="text-sm space-y-1">
-                <p>Importés: {result.imported}</p>
-                <p>Ignorés: {result.errors}</p>
+                <p>{t("common.imported")}: {result.imported}</p>
+                <p>{t("common.skipped")}: {result.errors}</p>
               </div>
               <Button variant="outline" onClick={() => navigate("/clients")}>
-                Voir la liste des clients
+                {t("clients.viewClientsList")}
               </Button>
             </div>
           )}

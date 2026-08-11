@@ -8,12 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { clients as clientsApi } from "@/lib/api";
+import { useTranslation } from "@/i18n/LanguageContext";
 import type { Client } from "@/types";
 
 export default function ClientFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = !!id;
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     code: "",
@@ -86,18 +88,18 @@ export default function ClientFormPage() {
         <Button variant="ghost" size="icon" onClick={() => navigate("/clients")}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h2 className="text-2xl font-bold">{isEdit ? "Modifier le Client" : "Nouveau Client"}</h2>
+        <h2 className="text-2xl font-bold">{isEdit ? t("common.edit") : t("clients.new")}</h2>
       </div>
 
       <form onSubmit={handleSubmit}>
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Informations Générales</CardTitle>
+              <CardTitle>{t("common.generalInfo")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Code *</Label>
+                <Label>{t("common.code")} *</Label>
                 <Input
                   value={form.code}
                   onChange={(e) => setForm((f) => ({ ...f, code: e.target.value }))}
@@ -105,7 +107,7 @@ export default function ClientFormPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Nom *</Label>
+                <Label>{t("common.name")} *</Label>
                 <Input
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
@@ -113,28 +115,28 @@ export default function ClientFormPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Société</Label>
+                <Label>{t("common.company")}</Label>
                 <Input
                   value={form.company}
                   onChange={(e) => setForm((f) => ({ ...f, company: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
-                <Label>Adresse</Label>
+                <Label>{t("common.address")}</Label>
                 <Textarea
                   value={form.address}
                   onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
-                <Label>Téléphone</Label>
+                <Label>{t("common.phone")}</Label>
                 <Input
                   value={form.phone}
                   onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
-                <Label>Email</Label>
+                <Label>{t("common.email")}</Label>
                 <Input
                   type="email"
                   value={form.email}
@@ -146,39 +148,39 @@ export default function ClientFormPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Informations Fiscales et Commerciales</CardTitle>
+              <CardTitle>{t("common.fiscalCommercialInfo")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>N° Fiscal (NIF)</Label>
+                <Label>{t("common.nif")}</Label>
                 <Input
                   value={form.fiscalId}
                   onChange={(e) => setForm((f) => ({ ...f, fiscalId: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
-                <Label>ICE</Label>
+                <Label>{t("common.ice")}</Label>
                 <Input
                   value={form.ice}
                   onChange={(e) => setForm((f) => ({ ...f, ice: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
-                <Label>N° Commercial</Label>
+                <Label>{t("common.commercialId")}</Label>
                 <Input
                   value={form.commercialId}
                   onChange={(e) => setForm((f) => ({ ...f, commercialId: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
-                <Label>N° Article</Label>
+                <Label>{t("common.articleId")}</Label>
                 <Input
                   value={form.articleId}
                   onChange={(e) => setForm((f) => ({ ...f, articleId: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
-                <Label>Limite de Crédit</Label>
+                <Label>{t("common.creditLimit")}</Label>
                 <Input
                   type="number"
                   value={form.creditLimit}
@@ -187,7 +189,7 @@ export default function ClientFormPage() {
               </div>
               {isEdit && (
                 <div className="space-y-2">
-                  <Label>Solde actuel</Label>
+                  <Label>{t("common.currentBalance")}</Label>
                   <Input
                     type="number"
                     step="0.01"
@@ -197,7 +199,7 @@ export default function ClientFormPage() {
                 </div>
               )}
               <div className="space-y-2">
-                <Label>Notes</Label>
+                <Label>{t("common.notes")}</Label>
                 <Textarea
                   value={form.notes}
                   onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
@@ -208,7 +210,7 @@ export default function ClientFormPage() {
                   checked={form.active}
                   onCheckedChange={(v) => setForm((f) => ({ ...f, active: v }))}
                 />
-                <Label>Client actif</Label>
+                <Label>{t("clients.activeClient")}</Label>
               </div>
             </CardContent>
           </Card>
@@ -216,11 +218,11 @@ export default function ClientFormPage() {
 
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="outline" onClick={() => navigate("/clients")}>
-            Annuler
+            {t("common.cancel")}
           </Button>
           <Button type="submit" disabled={loading}>
             <Save className="mr-2 h-4 w-4" />
-            {loading ? "Enregistrement..." : "Enregistrer"}
+            {loading ? t("common.saving") : t("common.save")}
           </Button>
         </div>
       </form>

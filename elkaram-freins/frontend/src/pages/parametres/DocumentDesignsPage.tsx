@@ -36,10 +36,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { settings as settingsApi } from "@/lib/api";
 import type { DocumentDesign } from "@/types";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 const FONTS = ["Inter", "Arial", "Helvetica", "Times New Roman", "Courier New", "Georgia"];
 
 export default function DocumentDesignsPage() {
+  const { t } = useTranslation();
   const [designs, setDesigns] = useState<DocumentDesign[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -131,10 +133,10 @@ export default function DocumentDesignsPage() {
 
   const getHeaderPreview = (style: string) => {
     switch (style) {
-      case "modern": return "En-tête moderne avec fond coloré";
-      case "classic": return "En-tête classique avec bordures";
-      case "professional": return "En-tête professionnel sobre";
-      case "minimal": return "En-tête minimaliste simple";
+      case "modern": return t("settings.modernHeader");
+      case "classic": return t("settings.classicHeader");
+      case "professional": return t("settings.professionalHeader");
+      case "minimal": return t("settings.minimalHeader");
       default: return "";
     }
   };
@@ -143,10 +145,10 @@ export default function DocumentDesignsPage() {
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Modèles de Documents</CardTitle>
+          <CardTitle>{t("settings.documentDesign")}</CardTitle>
           <Button size="sm" onClick={openCreate}>
             <Plus className="mr-2 h-4 w-4" />
-            Nouveau Modèle
+            {t("settings.newTemplate")}
           </Button>
         </CardHeader>
         <CardContent>
@@ -171,31 +173,31 @@ export default function DocumentDesignsPage() {
                       className="h-4 w-4 rounded-full border"
                       style={{ backgroundColor: design.primaryColor }}
                     />
-                    <span className="text-muted-foreground">Primaire</span>
+                    <span className="text-muted-foreground">{t("common.primary")}</span>
                     <div
                       className="h-4 w-4 rounded-full border"
                       style={{ backgroundColor: design.secondaryColor }}
                     />
-                    <span className="text-muted-foreground">Secondaire</span>
+                    <span className="text-muted-foreground">{t("common.secondary")}</span>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Police: {design.fontFamily} | {getHeaderPreview(design.headerStyle)}
+                    {t("common.font")}: {design.fontFamily} | {getHeaderPreview(design.headerStyle)}
                   </p>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span>Logo: {design.showLogo ? "Oui" : "Non"}</span>
+                    <span>{t("common.logo")}: {design.showLogo ? t("common.yes") : t("common.no")}</span>
                     <span>|</span>
-                    <span>Bordures: {design.showBorders ? "Oui" : "Non"}</span>
+                    <span>{t("common.borders")}: {design.showBorders ? t("common.yes") : t("common.no")}</span>
                   </div>
                   <div className="flex items-center gap-1 pt-2">
                     <Button variant="ghost" size="sm" onClick={() => openEdit(design)}>
                       <Edit className="h-4 w-4 mr-1" />
-                      Modifier
+                      {t("common.edit")}
                     </Button>
                     {!design.isDefault && (
                       <>
                         <Button variant="ghost" size="sm" onClick={() => setAsDefault(design.id)}>
                           <Star className="h-4 w-4 mr-1" />
-                          Défaut
+                          {t("common.default")}
                         </Button>
                         <Button variant="ghost" size="sm" className="text-red-600" onClick={() => setDeleteId(design.id)}>
                           <Trash2 className="h-4 w-4" />
@@ -208,7 +210,7 @@ export default function DocumentDesignsPage() {
             ))}
             {designs.length === 0 && !loading && (
               <p className="text-sm text-muted-foreground col-span-full text-center py-8">
-                Aucun modèle de document créé
+                {t("settings.noTemplatesCreated")}
               </p>
             )}
           </div>
@@ -218,16 +220,16 @@ export default function DocumentDesignsPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{editItem ? "Modifier le Modèle" : "Nouveau Modèle"}</DialogTitle>
+            <DialogTitle>{editItem ? t("settings.editTemplate") : t("settings.newTemplate")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Nom *</Label>
+              <Label>{t("common.name")} *</Label>
               <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Couleur Primaire</Label>
+                <Label>{t("common.primaryColor")}</Label>
                 <div className="flex gap-2">
                   <Input
                     type="color"
@@ -242,7 +244,7 @@ export default function DocumentDesignsPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Couleur Secondaire</Label>
+                <Label>{t("common.secondaryColor")}</Label>
                 <div className="flex gap-2">
                   <Input
                     type="color"
@@ -258,7 +260,7 @@ export default function DocumentDesignsPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Police</Label>
+              <Label>{t("common.font")}</Label>
               <Select value={form.fontFamily} onValueChange={(v) => setForm((f) => ({ ...f, fontFamily: v }))}>
                 <SelectTrigger>
                   <SelectValue />
@@ -271,33 +273,33 @@ export default function DocumentDesignsPage() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Style d'en-tête</Label>
+              <Label>{t("settings.headerStyle")}</Label>
               <Select value={form.headerStyle} onValueChange={(v) => setForm((f) => ({ ...f, headerStyle: v as "modern" | "classic" | "professional" | "minimal" }))}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="modern">Moderne</SelectItem>
-                  <SelectItem value="classic">Classique</SelectItem>
-                  <SelectItem value="professional">Professionnel</SelectItem>
-                  <SelectItem value="minimal">Minimal</SelectItem>
+                  <SelectItem value="modern">{t("settings.modern")}</SelectItem>
+                  <SelectItem value="classic">{t("settings.classic")}</SelectItem>
+                  <SelectItem value="professional">{t("settings.professional")}</SelectItem>
+                  <SelectItem value="minimal">{t("settings.minimal")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex items-center gap-2">
               <Switch checked={form.showLogo} onCheckedChange={(v) => setForm((f) => ({ ...f, showLogo: v }))} />
-              <Label>Afficher le logo</Label>
+              <Label>{t("settings.showLogo")}</Label>
             </div>
             <div className="flex items-center gap-2">
               <Switch checked={form.showBorders} onCheckedChange={(v) => setForm((f) => ({ ...f, showBorders: v }))} />
-              <Label>Afficher les bordures</Label>
+              <Label>{t("settings.showBorders")}</Label>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Annuler</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("common.cancel")}</Button>
             <Button onClick={handleSave}>
               <Save className="mr-2 h-4 w-4" />
-              Enregistrer
+              {t("common.save")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -306,12 +308,12 @@ export default function DocumentDesignsPage() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
-            <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer ce modèle ?</AlertDialogDescription>
+            <AlertDialogTitle>{t("common.confirmDelete")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("settings.confirmDeleteTemplate")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600">Supprimer</AlertDialogAction>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-red-600">{t("common.delete")}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

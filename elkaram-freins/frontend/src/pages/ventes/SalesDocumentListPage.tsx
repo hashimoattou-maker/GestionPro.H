@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Plus, Eye, Edit, Trash2, CheckCircle, RefreshCw, FileDown } from "lucide-react";
+import { useTranslation } from "@/i18n/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -42,15 +43,16 @@ const DOC_TYPE_MAP: Record<string, DocumentType> = {
   "/ventes/avoirs": "avoir_vente",
 };
 
-const DOC_TYPE_LABELS: Record<string, string> = {
-  devis: "Nouveau Devis",
-  commande_client: "Nouvelle Commande Client",
-  bon_livraison: "Nouveau Bon de Livraison",
-  facture_vente: "Nouvelle Facture Vente",
-  avoir_vente: "Nouvel Avoir Vente",
+const DOC_TYPE_LABELS = {
+  devis: "doc.newDevis" as const,
+  commande_client: "doc.newCommandeClient" as const,
+  bon_livraison: "doc.newBonLivraison" as const,
+  facture_vente: "doc.newFactureVente" as const,
+  avoir_vente: "doc.newAvoirVente" as const,
 };
 
 export default function SalesDocumentListPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const basePath = location.pathname;
@@ -129,15 +131,16 @@ export default function SalesDocumentListPage() {
   function getPaymentStatus(doc: Document) {
     const paid = doc.paidAmount || 0;
     const total = doc.total || 0;
-    if (paid <= 0) return "Non réglé";
-    if (paid >= total - 0.01) return "Réglé";
-    return "Partiel";
+    if (paid <= 0) return t("payment.unpaid");
+    if (paid >= total - 0.01) return t("payment.paid");
+    return t("payment.partial");
   }
 
   function getPaymentStatusStyle(doc: Document) {
-    const status = getPaymentStatus(doc);
-    if (status === "Réglé") return "bg-green-100 text-green-700 border border-green-300";
-    if (status === "Partiel") return "bg-yellow-100 text-yellow-700 border border-yellow-300";
+    const paid = doc.paidAmount || 0;
+    const total = doc.total || 0;
+    if (paid >= total - 0.01) return "bg-green-100 text-green-700 border border-green-300";
+    if (paid > 0) return "bg-yellow-100 text-yellow-700 border border-yellow-300";
     return "bg-red-100 text-red-700 border border-red-300";
   }
 
@@ -150,14 +153,14 @@ export default function SalesDocumentListPage() {
           <CardTitle>{getDocTypeLabel(docType)}</CardTitle>
           <Button size="sm" onClick={() => navigate(`${basePath}/new`)}>
             <Plus className="mr-2 h-4 w-4" />
-            {DOC_TYPE_LABELS[docType]}
+            {t(DOC_TYPE_LABELS[docType as keyof typeof DOC_TYPE_LABELS])}
           </Button>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4 mb-4">
             <div className="relative flex-1">
               <Input
-                placeholder="Rechercher..."
+                placeholder={t("common.search")}
                 className="pl-8"
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
@@ -165,16 +168,16 @@ export default function SalesDocumentListPage() {
             </div>
             <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
               <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Statut" />
+                <SelectValue placeholder={t("common.status")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous</SelectItem>
-                <SelectItem value="brouillon">Brouillon</SelectItem>
-                <SelectItem value="confirmé">Validé</SelectItem>
-                <SelectItem value="paye">Payé</SelectItem>
-                <SelectItem value="partiel">Partiel</SelectItem>
-                <SelectItem value="impaye">Impayé</SelectItem>
-                <SelectItem value="annule">Annulé</SelectItem>
+                <SelectItem value="all">{t("common.all")}</SelectItem>
+                <SelectItem value="brouillon">{t("filter.brouillon")}</SelectItem>
+                <SelectItem value="confirmé">{t("filter.confirmed")}</SelectItem>
+                <SelectItem value="paye">{t("filter.paid")}</SelectItem>
+                <SelectItem value="partiel">{t("payment.partial")}</SelectItem>
+                <SelectItem value="impaye">{t("filter.unpaid")}</SelectItem>
+                <SelectItem value="annule">{t("filter.cancelled")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -183,15 +186,15 @@ export default function SalesDocumentListPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>N° Document</TableHead>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>Mode de paiement</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Total réglé</TableHead>
-                  <TableHead>Reste</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t("doc.newDocumentSale")}</TableHead>
+                  <TableHead>{t("clients.client")}</TableHead>
+                  <TableHead>{t("common.date")}</TableHead>
+                  <TableHead>{t("common.status")}</TableHead>
+                  <TableHead>{t("payment.modePayment")}</TableHead>
+                  <TableHead>{t("common.total")}</TableHead>
+                  <TableHead>{t("payment.totalPaid")}</TableHead>
+                  <TableHead>{t("payment.remainingAmount")}</TableHead>
+                  <TableHead>{t("common.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -204,7 +207,7 @@ export default function SalesDocumentListPage() {
                 ) : docList.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
-                      Aucun document trouvé
+                      {t("common.noResults")}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -226,25 +229,25 @@ export default function SalesDocumentListPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => navigate(`${basePath}/${doc.id}`)} title="Voir">
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => navigate(`${basePath}/${doc.id}`)} title={t("common.view")}>
                             <Eye className="h-5 w-5" />
                           </Button>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleView(doc.id)} title="Télécharger PDF">
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleView(doc.id)} title={t("common.pdf")}>
                             <FileDown className="h-5 w-5" />
                           </Button>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => navigate(`${basePath}/${doc.id}/edit`)} title="Modifier">
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => navigate(`${basePath}/${doc.id}/edit`)} title={t("common.edit")}>
                             <Edit className="h-5 w-5" />
                           </Button>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700" onClick={() => setDeleteId(doc.id)} title="Supprimer">
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700" onClick={() => setDeleteId(doc.id)} title={t("common.delete")}>
                             <Trash2 className="h-5 w-5" />
                           </Button>
                           {doc.status === "brouillon" && (
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-green-600 hover:text-green-700" onClick={() => handleValidate(doc.id)} title="Valider">
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-green-600 hover:text-green-700" onClick={() => handleValidate(doc.id)} title={t("common.validate")}>
                               <CheckCircle className="h-5 w-5" />
                             </Button>
                           )}
                           {doc.status === "confirmé" && (
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleConvert(doc)} title="Convertir">
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleConvert(doc)} title={t("common.convert")}>
                               <RefreshCw className="h-5 w-5" />
                             </Button>
                           )}
@@ -260,11 +263,11 @@ export default function SalesDocumentListPage() {
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-2 mt-4">
               <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
-                Précédent
+                {t("common.previous")}
               </Button>
-              <span className="text-sm text-muted-foreground">Page {page} sur {totalPages}</span>
+              <span className="text-sm text-muted-foreground">{t("common.pageOf", { page, totalPages })}</span>
               <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
-                Suivant
+                {t("common.next")}
               </Button>
             </div>
           )}
@@ -274,14 +277,14 @@ export default function SalesDocumentListPage() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+            <AlertDialogTitle>{t("common.confirmDelete")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Êtes-vous sûr de vouloir supprimer ce document ? Cette action est irréversible.
+              {t("common.confirmDeleteDoc")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600">Supprimer</AlertDialogAction>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-red-600">{t("common.delete")}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

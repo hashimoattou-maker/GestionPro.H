@@ -10,6 +10,7 @@ import ClassicTemplate from "@/components/document-templates/ClassicTemplate";
 import ModernTemplate from "@/components/document-templates/ModernTemplate";
 import ProfessionalTemplate from "@/components/document-templates/ProfessionalTemplate";
 import MinimalTemplate from "@/components/document-templates/MinimalTemplate";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 const DOC_TYPE_PATH: Record<string, string> = {
   devis: "devis",
@@ -26,6 +27,7 @@ const DOC_TYPE_PATH: Record<string, string> = {
 export default function DocumentDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [doc, setDoc] = useState<Document | null>(null);
   const [company, setCompany] = useState<CompanySettings | null>(null);
   const [design, setDesign] = useState<DocumentDesign | null>(null);
@@ -96,15 +98,15 @@ export default function DocumentDetailPage() {
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handlePrint}>
-            <Printer className="mr-2 h-4 w-4" /> Imprimer
+            <Printer className="mr-2 h-4 w-4" /> {t("common.print")}
           </Button>
           {doc.status === "brouillon" && (
             <>
               <Button variant="outline" size="sm" onClick={() => navigate(`${base}/${path}/${doc.id}/edit`)}>
-                Modifier
+                {t("common.edit")}
               </Button>
               <Button variant="default" size="sm" className="bg-green-600" onClick={handleValidate}>
-                <CheckCircle className="mr-2 h-4 w-4" /> Valider
+                <CheckCircle className="mr-2 h-4 w-4" /> {t("common.validate")}
               </Button>
             </>
           )}
@@ -115,9 +117,9 @@ export default function DocumentDetailPage() {
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <span>{getDocTypeLabel(doc.docType)}</span>
           <span>•</span>
-          <span>Date: {doc.date.split("T")[0]}</span>
+          <span>{t("common.date")}: {doc.date.split("T")[0]}</span>
           <span>•</span>
-          <span>Total: {formatCurrency(doc.total)}</span>
+          <span>{t("common.total")}: {formatCurrency(doc.total)}</span>
         </div>
       </div>
 

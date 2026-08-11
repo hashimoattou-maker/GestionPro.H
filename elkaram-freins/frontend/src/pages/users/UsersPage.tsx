@@ -44,9 +44,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { users as usersApi } from "@/lib/api";
+import { useTranslation } from "@/i18n/LanguageContext";
 import type { User } from "@/types";
 
 export default function UsersPage() {
+  const { t } = useTranslation();
   const [userList, setUserList] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -131,11 +133,11 @@ export default function UsersPage() {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <UserCog className="h-5 w-5" />
-            Utilisateurs
+            {t("users.title")}
           </CardTitle>
           <Button size="sm" onClick={openCreate}>
             <Plus className="mr-2 h-4 w-4" />
-            Nouvel Utilisateur
+            {t("users.new")}
           </Button>
         </CardHeader>
         <CardContent>
@@ -143,12 +145,12 @@ export default function UsersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Nom d'utilisateur</TableHead>
-                  <TableHead>Nom complet</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Rôle</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t("users.username")}</TableHead>
+                  <TableHead>{t("users.fullName")}</TableHead>
+                  <TableHead>{t("common.email")}</TableHead>
+                  <TableHead>{t("users.role")}</TableHead>
+                  <TableHead>{t("common.status")}</TableHead>
+                  <TableHead>{t("common.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -161,7 +163,7 @@ export default function UsersPage() {
                 ) : userList.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                      Aucun utilisateur
+                      {t("users.noUsers")}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -179,7 +181,7 @@ export default function UsersPage() {
                         <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                           user.active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
                         }`}>
-                          {user.active ? "Actif" : "Inactif"}
+                          {user.active ? t("common.active") : t("common.inactive")}
                         </span>
                       </TableCell>
                       <TableCell>
@@ -201,48 +203,48 @@ export default function UsersPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editItem ? "Modifier l'utilisateur" : "Nouvel utilisateur"}</DialogTitle>
+            <DialogTitle>{editItem ? t("common.edit") : t("users.new")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Nom d'utilisateur *</Label>
+              <Label>{t("users.username")} *</Label>
               <Input value={form.username} onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))} />
             </div>
             <div className="space-y-2">
-              <Label>Nom complet *</Label>
+              <Label>{t("users.fullName")} *</Label>
               <Input value={form.fullName} onChange={(e) => setForm((f) => ({ ...f, fullName: e.target.value }))} />
             </div>
             <div className="space-y-2">
-              <Label>Email *</Label>
+              <Label>{t("common.email")} *</Label>
               <Input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} />
             </div>
             <div className="space-y-2">
-              <Label>Mot de passe {editItem ? "(laisser vide pour conserver)" : "*"}</Label>
+              <Label>{t("users.password")} {editItem ? `(${t("users.leaveEmptyToKeep")})` : "*"}</Label>
               <Input type="password" value={form.password} onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))} />
             </div>
             <div className="space-y-2">
-              <Label>Rôle</Label>
+              <Label>{t("users.role")}</Label>
               <Select value={form.role} onValueChange={(v) => setForm((f) => ({ ...f, role: v as "admin" | "manager" | "user" }))}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="manager">Manager</SelectItem>
-                  <SelectItem value="user">Utilisateur</SelectItem>
+                  <SelectItem value="admin">{t("users.admin")}</SelectItem>
+                  <SelectItem value="manager">{t("users.manager")}</SelectItem>
+                  <SelectItem value="user">{t("users.user")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="flex items-center gap-2">
               <Switch checked={form.active} onCheckedChange={(v) => setForm((f) => ({ ...f, active: v }))} />
-              <Label>Compte actif</Label>
+              <Label>{t("users.activeAccount")}</Label>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Annuler</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("common.cancel")}</Button>
             <Button onClick={handleSave}>
               <Save className="mr-2 h-4 w-4" />
-              Enregistrer
+              {t("common.save")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -251,12 +253,12 @@ export default function UsersPage() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
-            <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer cet utilisateur ?</AlertDialogDescription>
+            <AlertDialogTitle>{t("common.confirmDelete")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("users.deleteConfirmation")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600">Supprimer</AlertDialogAction>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-red-600">{t("common.delete")}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

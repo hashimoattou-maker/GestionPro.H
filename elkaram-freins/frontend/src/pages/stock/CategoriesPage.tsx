@@ -31,9 +31,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { categories as categoriesApi } from "@/lib/api";
+import { useTranslation } from "@/i18n/LanguageContext";
 import type { Category } from "@/types";
 
 export default function CategoriesPage() {
+  const { t } = useTranslation();
   const [categoryList, setCategoryList] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -95,10 +97,10 @@ export default function CategoriesPage() {
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Catégories</CardTitle>
+          <CardTitle>{t("products.categories")}</CardTitle>
           <Button size="sm" onClick={openCreate}>
             <Plus className="mr-2 h-4 w-4" />
-            Nouvelle Catégorie
+            {t("products.newCategory")}
           </Button>
         </CardHeader>
         <CardContent>
@@ -106,10 +108,10 @@ export default function CategoriesPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Nom</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t("common.name")}</TableHead>
+                  <TableHead>{t("common.description")}</TableHead>
+                  <TableHead>{t("common.status")}</TableHead>
+                  <TableHead>{t("common.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -122,7 +124,7 @@ export default function CategoriesPage() {
                 ) : categoryList.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                      Aucune catégorie trouvée
+                      {t("products.noCategories")}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -138,7 +140,7 @@ export default function CategoriesPage() {
                               : "bg-red-100 text-red-700"
                           }`}
                         >
-                          {cat.active ? "Actif" : "Inactif"}
+                          {cat.active ? t("common.active") : t("common.inactive")}
                         </span>
                       </TableCell>
                       <TableCell>
@@ -168,18 +170,18 @@ export default function CategoriesPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editItem ? "Modifier la Catégorie" : "Nouvelle Catégorie"}</DialogTitle>
+            <DialogTitle>{editItem ? t("common.edit") : t("products.newCategory")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Nom *</Label>
+              <Label>{t("common.name")} *</Label>
               <Input
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label>{t("common.description")}</Label>
               <Textarea
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
@@ -188,11 +190,11 @@ export default function CategoriesPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Annuler
+              {t("common.cancel")}
             </Button>
             <Button onClick={handleSave}>
               <Save className="mr-2 h-4 w-4" />
-              Enregistrer
+              {t("common.save")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -201,15 +203,15 @@ export default function CategoriesPage() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+            <AlertDialogTitle>{t("common.confirmDelete")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Êtes-vous sûr de vouloir supprimer cette catégorie ?
+              {t("products.deleteCategoryConfirmation")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-red-600">
-              Supprimer
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

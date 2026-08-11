@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { settings as settingsApi } from "@/lib/api";
 import type { ColumnSetting } from "@/types";
 import { DOCUMENT_TYPES } from "@/lib/utils";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 const ALL_COLUMNS: Record<string, string[]> = {
   devis: ["N° Document", "Client", "Date", "Total", "Statut", "Actions"],
@@ -28,6 +29,7 @@ const ALL_COLUMNS: Record<string, string[]> = {
 };
 
 export default function ColumnSettingsPage() {
+  const { t } = useTranslation();
   const [docType, setDocType] = useState("facture_vente");
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
@@ -63,11 +65,11 @@ export default function ColumnSettingsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Paramètres des Colonnes</CardTitle>
+        <CardTitle>{t("settings.columnParameters")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label>Type de document</Label>
+          <Label>{t("common.docType")}</Label>
           <Select value={docType} onValueChange={setDocType}>
             <SelectTrigger className="w-full max-w-xs">
               <SelectValue />
@@ -83,7 +85,7 @@ export default function ColumnSettingsPage() {
         </div>
 
         <div className="space-y-3">
-          <Label>Colonnes à afficher</Label>
+          <Label>{t("settings.columnsToDisplay")}</Label>
           <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
             {availableColumns.map((col) => (
               <div key={col} className="flex items-center gap-2">
@@ -102,7 +104,7 @@ export default function ColumnSettingsPage() {
 
         <Button onClick={handleSave} disabled={saving}>
           <Save className="mr-2 h-4 w-4" />
-          {saving ? "Enregistrement..." : "Enregistrer"}
+          {saving ? t("common.saving") : t("common.save")}
         </Button>
       </CardContent>
     </Card>

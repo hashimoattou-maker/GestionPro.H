@@ -15,6 +15,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { products, categories } from "@/lib/api";
+import { useTranslation } from "@/i18n/LanguageContext";
 import type { Product, Category } from "@/types";
 
 const UNITS = ["Pièce", "Kg", "Litre", "Mètre", "Boîte", "Carton", "Palette", "Rouleau", "Set"];
@@ -23,6 +24,7 @@ export default function ProductFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = !!id;
+  const { t } = useTranslation();
   const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -111,18 +113,18 @@ export default function ProductFormPage() {
         <Button variant="ghost" size="icon" onClick={() => navigate("/stock/products")}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h2 className="text-2xl font-bold">{isEdit ? "Modifier le Produit" : "Nouveau Produit"}</h2>
+        <h2 className="text-2xl font-bold">{isEdit ? t("common.edit") : t("products.new")}</h2>
       </div>
 
       <form onSubmit={handleSubmit}>
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Informations Générales</CardTitle>
+              <CardTitle>{t("common.generalInfo")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Référence *</Label>
+                <Label>{t("common.reference")} *</Label>
                 <Input
                   value={form.reference}
                   onChange={(e) => setForm((f) => ({ ...f, reference: e.target.value }))}
@@ -130,7 +132,7 @@ export default function ProductFormPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Nom *</Label>
+                <Label>{t("common.name")} *</Label>
                 <Input
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
@@ -138,7 +140,7 @@ export default function ProductFormPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Description</Label>
+                <Label>{t("common.description")}</Label>
                 <Textarea
                   value={form.description}
                   onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
@@ -146,13 +148,13 @@ export default function ProductFormPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Catégorie</Label>
+                <Label>{t("products.category")}</Label>
                 <Select
                   value={form.categoryId}
                   onValueChange={(v) => setForm((f) => ({ ...f, categoryId: v }))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner une catégorie" />
+                    <SelectValue placeholder={t("products.selectCategory")} />
                   </SelectTrigger>
                   <SelectContent>
                     {allCategories.map((cat) => (
@@ -164,7 +166,7 @@ export default function ProductFormPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Code-barres</Label>
+                <Label>{t("products.barcode")}</Label>
                 <div className="flex gap-2">
                   <Input
                     value={form.barcode}
@@ -176,7 +178,7 @@ export default function ProductFormPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Unité</Label>
+                <Label>{t("common.unit")}</Label>
                 <Select
                   value={form.unit}
                   onValueChange={(v) => setForm((f) => ({ ...f, unit: v }))}
@@ -198,18 +200,18 @@ export default function ProductFormPage() {
                   checked={form.active}
                   onCheckedChange={(v) => setForm((f) => ({ ...f, active: v }))}
                 />
-                <Label>Produit actif</Label>
+                <Label>{t("products.activeProduct")}</Label>
               </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Prix et Stock</CardTitle>
+              <CardTitle>{t("products.priceAndStock")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Prix d'Achat</Label>
+                <Label>{t("products.purchasePrice")}</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -218,7 +220,7 @@ export default function ProductFormPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Prix de Vente</Label>
+                <Label>{t("products.sellingPrice")}</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -227,7 +229,7 @@ export default function ProductFormPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Prix de Gros</Label>
+                <Label>{t("products.wholesalePrice")}</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -236,7 +238,7 @@ export default function ProductFormPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Stock Actuel</Label>
+                <Label>{t("products.currentStock")}</Label>
                 <Input
                   type="number"
                   value={form.stock}
@@ -244,7 +246,7 @@ export default function ProductFormPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Stock Minimum (Alerte)</Label>
+                <Label>{t("products.minStock")}</Label>
                 <Input
                   type="number"
                   value={form.minStock}
@@ -257,11 +259,11 @@ export default function ProductFormPage() {
 
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="outline" onClick={() => navigate("/stock/products")}>
-            Annuler
+            {t("common.cancel")}
           </Button>
           <Button type="submit" disabled={loading}>
             <Save className="mr-2 h-4 w-4" />
-            {loading ? "Enregistrement..." : "Enregistrer"}
+            {loading ? t("common.saving") : t("common.save")}
           </Button>
         </div>
       </form>

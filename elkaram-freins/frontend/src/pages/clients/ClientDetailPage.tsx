@@ -25,11 +25,13 @@ import {
 } from "@/components/ui/dialog";
 import { clients as clientsApi, documents as documentsApi } from "@/lib/api";
 import { formatCurrency, formatDate, getStatusBadge, getDocTypeLabel } from "@/lib/utils";
+import { useTranslation } from "@/i18n/LanguageContext";
 import type { Client, Document } from "@/types";
 
 export default function ClientDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [client, setClient] = useState<Client | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
@@ -112,11 +114,11 @@ export default function ClientDetailPage() {
         </Button>
         <div>
           <h2 className="text-2xl font-bold">{client.name}</h2>
-          <p className="text-muted-foreground">Code: {client.code}</p>
+          <p className="text-muted-foreground">{t("common.code")}: {client.code}</p>
         </div>
         <div className="ml-auto">
           <Button variant="outline" onClick={() => navigate(`/clients/${id}/edit`)}>
-            Modifier
+            {t("common.edit")}
           </Button>
         </div>
       </div>
@@ -126,21 +128,21 @@ export default function ClientDetailPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Wallet className="h-5 w-5" />
-            Situation Client
+            {t("clients.situation")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-6 md:grid-cols-3">
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Total des documents</p>
+              <p className="text-sm text-muted-foreground">{t("clients.totalDocuments")}</p>
               <p className="text-2xl font-bold">{formatCurrency(totalDue)}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Total payé</p>
+              <p className="text-sm text-muted-foreground">{t("clients.totalPaid")}</p>
               <p className="text-2xl font-bold text-green-600">{formatCurrency(totalPaid)}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Solde restant</p>
+              <p className="text-sm text-muted-foreground">{t("clients.remainingBalance")}</p>
               <p className={`text-2xl font-bold ${restantDu > 0 ? "text-red-600" : "text-green-600"}`}>
                 {formatCurrency(restantDu)}
               </p>
@@ -149,7 +151,7 @@ export default function ClientDetailPage() {
           {totalDue > 0 && (
             <div className="mt-4">
               <div className="flex items-center gap-2 text-sm mb-1">
-                <span className="text-muted-foreground">Progression du paiement</span>
+                <span className="text-muted-foreground">{t("clients.paymentProgress")}</span>
                 <span className="font-medium">{Math.round((totalPaid / totalDue) * 100)}%</span>
               </div>
               <div className="h-3 w-full rounded-full bg-muted overflow-hidden">
@@ -166,16 +168,16 @@ export default function ClientDetailPage() {
           <div className="mt-4 flex items-center gap-2">
             {restantDu <= 0 ? (
               <Badge className="bg-green-600 text-white flex items-center gap-1 text-sm px-3 py-1">
-                <CheckCircle className="h-4 w-4" /> Compte soldé
+                <CheckCircle className="h-4 w-4" /> {t("clients.accountSettled")}
               </Badge>
             ) : (
               <Badge variant="destructive" className="flex items-center gap-1 text-sm px-3 py-1">
-                <XCircle className="h-4 w-4" /> Solde impayé de {formatCurrency(restantDu)}
+                <XCircle className="h-4 w-4" /> {t("clients.unpaidBalance")} {formatCurrency(restantDu)}
               </Badge>
             )}
             {client.balance > 0 && (
               <span className="text-sm text-muted-foreground">
-                (Solde comptable: {formatCurrency(client.balance)})
+                ({t("clients.accountingBalance")}: {formatCurrency(client.balance)})
               </span>
             )}
           </div>
@@ -187,7 +189,7 @@ export default function ClientDetailPage() {
           <CardHeader>
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <Building2 className="h-4 w-4" />
-              Société
+              {t("common.company")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -198,7 +200,7 @@ export default function ClientDetailPage() {
           <CardHeader>
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <CreditCard className="h-4 w-4" />
-              Solde comptable
+              {t("clients.accountingBalance")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -211,7 +213,7 @@ export default function ClientDetailPage() {
           <CardHeader>
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              Documents
+              {t("clients.documents")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -223,46 +225,46 @@ export default function ClientDetailPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Informations de Contact</CardTitle>
+            <CardTitle>{t("clients.contactInfo")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex items-center gap-2">
               <Phone className="h-4 w-4 text-muted-foreground" />
-              <span>{client.phone || "Non renseigné"}</span>
+              <span>{client.phone || t("common.notProvided")}</span>
             </div>
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-muted-foreground" />
-              <span>{client.email || "Non renseigné"}</span>
+              <span>{client.email || t("common.notProvided")}</span>
             </div>
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-muted-foreground" />
-              <span>{client.address || "Non renseigné"}</span>
+              <span>{client.address || t("common.notProvided")}</span>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Informations Fiscales</CardTitle>
+            <CardTitle>{t("common.fiscalInfo")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">N° Fiscal</span>
+              <span className="text-muted-foreground">{t("common.taxId")}</span>
               <span className="font-medium">{client.fiscalId || "-"}</span>
             </div>
             <Separator />
             <div className="flex justify-between">
-              <span className="text-muted-foreground">N° Commercial</span>
+              <span className="text-muted-foreground">{t("common.commercialId")}</span>
               <span className="font-medium">{client.commercialId || "-"}</span>
             </div>
             <Separator />
             <div className="flex justify-between">
-              <span className="text-muted-foreground">N° Article</span>
+              <span className="text-muted-foreground">{t("common.articleId")}</span>
               <span className="font-medium">{client.articleId || "-"}</span>
             </div>
             <Separator />
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Limite de Crédit</span>
+              <span className="text-muted-foreground">{t("common.creditLimit")}</span>
               <span className="font-medium">{formatCurrency(client.creditLimit)}</span>
             </div>
           </CardContent>
@@ -271,28 +273,28 @@ export default function ClientDetailPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Historique des Documents</CardTitle>
+          <CardTitle>{t("clients.documentHistory")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>N° Document</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Payé</TableHead>
-                  <TableHead>Restant</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t("common.documentNumber")}</TableHead>
+                  <TableHead>{t("common.type")}</TableHead>
+                  <TableHead>{t("common.date")}</TableHead>
+                  <TableHead>{t("common.total")}</TableHead>
+                  <TableHead>{t("common.paid")}</TableHead>
+                  <TableHead>{t("common.remaining")}</TableHead>
+                  <TableHead>{t("common.status")}</TableHead>
+                  <TableHead>{t("common.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {documents.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                      Aucun document
+                      {t("clients.noDocuments")}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -329,11 +331,11 @@ export default function ClientDetailPage() {
                                 navigate(`${base}/${paths[doc.docType] || doc.docType}/${doc.id}`);
                               }}
                             >
-                              Voir
+                              {t("common.view")}
                             </Button>
                             {isUnpaid && (
                               <Button variant="outline" size="sm" className="text-green-600" onClick={() => openPayment(doc)}>
-                                <DollarSign className="h-3 w-3 mr-1" /> Payer
+                                <DollarSign className="h-3 w-3 mr-1" /> {t("common.pay")}
                               </Button>
                             )}
                           </div>
@@ -353,27 +355,27 @@ export default function ClientDetailPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-green-600" />
-              Enregistrer un paiement
+              {t("clients.recordPayment")}
             </DialogTitle>
           </DialogHeader>
           {paymentDoc && (
             <div className="space-y-4">
               <div className="rounded-lg bg-muted p-3 text-sm">
                 <div className="flex justify-between">
-                  <span>Document:</span>
+                  <span>{t("common.document")}:</span>
                   <span className="font-medium">{paymentDoc.docNumber}</span>
                 </div>
                 <div className="flex justify-between mt-1">
-                  <span>Total:</span>
+                  <span>{t("common.total")}:</span>
                   <span className="font-medium">{formatCurrency(paymentDoc.total)}</span>
                 </div>
                 <div className="flex justify-between mt-1">
-                  <span>Déjà payé:</span>
+                  <span>{t("common.paid")}:</span>
                   <span className="font-medium text-green-600">{formatCurrency(paymentDoc.paidAmount || 0)}</span>
                 </div>
                 <Separator className="my-2" />
                 <div className="flex justify-between">
-                  <span>Reste à payer:</span>
+                  <span>{t("common.remainingToPay")}:</span>
                   <span className="font-medium text-red-600">
                     {formatCurrency(paymentDoc.total - (paymentDoc.paidAmount || 0))}
                   </span>
@@ -381,7 +383,7 @@ export default function ClientDetailPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Montant du paiement</Label>
+                <Label>{t("common.paymentAmount")}</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -390,36 +392,36 @@ export default function ClientDetailPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Mode de paiement</Label>
+                <Label>{t("common.paymentMethod")}</Label>
                 <Select value={paymentMethod} onValueChange={setPaymentMethod}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="espece">Espèces</SelectItem>
-                    <SelectItem value="cheque">Chèque</SelectItem>
-                    <SelectItem value="virement">Virement bancaire</SelectItem>
-                    <SelectItem value="carte">Carte bancaire</SelectItem>
-                    <SelectItem value="traite">Traite / Effet</SelectItem>
+                    <SelectItem value="espece">{t("common.cash")}</SelectItem>
+                    <SelectItem value="cheque">{t("common.check")}</SelectItem>
+                    <SelectItem value="virement">{t("common.bankTransfer")}</SelectItem>
+                    <SelectItem value="carte">{t("common.bankCard")}</SelectItem>
+                    <SelectItem value="traite">{t("common.billOfExchange")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Référence (optionnelle)</Label>
+                <Label>{t("common.referenceOptional")}</Label>
                 <Input
                   value={paymentRef}
                   onChange={(e) => setPaymentRef(e.target.value)}
-                  placeholder="N° chèque, virement..."
+                  placeholder={t("common.checkNumberPlaceholder")}
                 />
               </div>
             </div>
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setPaymentDoc(null)}>
-              Annuler
+              {t("common.cancel")}
             </Button>
             <Button className="bg-green-600" onClick={handlePayment} disabled={submitting || !paymentAmount || Number(paymentAmount) <= 0}>
-              {submitting ? "Enregistrement..." : "Confirmer le paiement"}
+              {submitting ? t("common.saving") : t("common.confirmPayment")}
             </Button>
           </DialogFooter>
         </DialogContent>

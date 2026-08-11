@@ -13,10 +13,12 @@ import {
 } from "@/components/ui/card";
 import { settings as settingsApi } from "@/lib/api";
 import { useTheme, THEMES } from "@/hooks/useTheme";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 export default function SettingsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { appTheme, setAppTheme } = useTheme();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -62,7 +64,7 @@ export default function SettingsPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      setStatus({ type: "error", msg: "Veuillez sélectionner une image" });
+      setStatus({ type: "error", msg: t("settings.selectImage") });
       return;
     }
     setUploading(true);
@@ -70,11 +72,11 @@ export default function SettingsPage() {
     try {
       const result = await settingsApi.uploadLogo(file);
       setLogo(result.logoPath);
-      setStatus({ type: "success", msg: "Logo mis à jour avec succès" });
+      setStatus({ type: "success", msg: t("settings.logoUpdated") });
     } catch (err: any) {
       console.error("Upload error:", err);
-      const msg = err?.response?.data?.error || err?.message || "Erreur lors du téléchargement du logo";
-      setStatus({ type: "error", msg: `Erreur: ${msg}` });
+      const msg = err?.response?.data?.error || err?.message || t("settings.logoUploadError");
+      setStatus({ type: "error", msg: `${t("common.error")}: ${msg}` });
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -100,11 +102,11 @@ export default function SettingsPage() {
         logoWidth: Number(form.logoWidth),
         logoHeight: Number(form.logoHeight),
       });
-      setStatus({ type: "success", msg: "Paramètres enregistrés avec succès" });
+      setStatus({ type: "success", msg: t("settings.saved") });
     } catch (err: any) {
       console.error("Save error:", err);
-      const msg = err?.response?.data?.error || err?.message || "Erreur lors de l'enregistrement";
-      setStatus({ type: "error", msg: `Erreur: ${msg}` });
+      const msg = err?.response?.data?.error || err?.message || t("settings.saveError");
+      setStatus({ type: "error", msg: `${t("common.error")}: ${msg}` });
     } finally {
       setLoading(false);
     }
@@ -113,7 +115,7 @@ export default function SettingsPage() {
   if (initialLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Chargement...</p>
+        <p className="text-muted-foreground">{t("common.loading")}</p>
       </div>
     );
   }
@@ -129,14 +131,14 @@ export default function SettingsPage() {
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Informations de la Société</CardTitle>
+              <CardTitle>{t("settings.companyInfo")}</CardTitle>
               <CardDescription>
-                Ces informations apparaîtront sur vos documents.
+                {t("settings.companyInfoDescription")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Nom de la Société *</Label>
+                <Label>{t("common.companyName")} *</Label>
                 <Input
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
@@ -144,21 +146,21 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Adresse</Label>
+                <Label>{t("common.address")}</Label>
                 <Textarea
                   value={form.address}
                   onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
-                <Label>Téléphone</Label>
+                <Label>{t("common.phone")}</Label>
                 <Input
                   value={form.phone}
                   onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
-                <Label>Email</Label>
+                <Label>{t("common.email")}</Label>
                 <Input
                   type="email"
                   value={form.email}
@@ -166,21 +168,21 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Site Web</Label>
+                <Label>{t("settings.website")}</Label>
                 <Input
                   value={form.website}
                   onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
-                <Label>N° Fiscal (NIF)</Label>
+                <Label>{t("common.nif")}</Label>
                 <Input
                   value={form.fiscalId}
                   onChange={(e) => setForm((f) => ({ ...f, fiscalId: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
-                <Label>ICE</Label>
+                <Label>{t("common.ice")}</Label>
                 <Input
                   value={form.ice}
                   onChange={(e) => setForm((f) => ({ ...f, ice: e.target.value }))}
@@ -192,14 +194,14 @@ export default function SettingsPage() {
           <div className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Logo et Configuration</CardTitle>
+                <CardTitle>{t("settings.logoAndConfig")}</CardTitle>
                 <CardDescription>
-                  Logo et paramètres financiers.
+                  {t("settings.logoAndConfigDescription")}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
-                  <Label>Logo de la Société</Label>
+                  <Label>{t("settings.companyLogo")}</Label>
                   <div className="flex items-center gap-4 p-4 border rounded-lg bg-muted/30">
                     {logo ? (
                       <img
@@ -210,7 +212,7 @@ export default function SettingsPage() {
                       />
                     ) : (
                       <div className="flex items-center justify-center border rounded bg-white" style={{ width: Number(form.logoWidth), height: Number(form.logoHeight) }}>
-                        <p className="text-xs text-muted-foreground">Aucun logo</p>
+                        <p className="text-xs text-muted-foreground">{t("settings.noLogo")}</p>
                       </div>
                     )}
                     <div className="flex flex-col gap-2">
@@ -229,14 +231,14 @@ export default function SettingsPage() {
                         onClick={() => fileInputRef.current?.click()}
                       >
                         <Upload className="mr-2 h-4 w-4" />
-                        {uploading ? "Upload..." : "Choisir un logo"}
+                        {uploading ? "Upload..." : t("settings.chooseLogo")}
                       </Button>
                     </div>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Largeur (px)</Label>
+                    <Label>{t("settings.width")}</Label>
                     <Input
                       type="number"
                       min="50"
@@ -245,7 +247,7 @@ export default function SettingsPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Hauteur (px)</Label>
+                    <Label>{t("settings.height")}</Label>
                     <Input
                       type="number"
                       min="30"
@@ -255,14 +257,14 @@ export default function SettingsPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>Devise</Label>
+                  <Label>{t("common.currency")}</Label>
                   <Input
                     value={form.currency}
                     onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value }))}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Taux TVA (%)</Label>
+                  <Label>{t("settings.taxRate")}</Label>
                   <Input
                     type="number"
                     step="0.1"
@@ -275,23 +277,23 @@ export default function SettingsPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Thème de l'application</CardTitle>
+                <CardTitle>{t("settings.appTheme")}</CardTitle>
                 <CardDescription>
-                  Choisissez la couleur principale de l'interface.
+                  {t("settings.appThemeDescription")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-3">
-                  {THEMES.map((t) => (
+                  {THEMES.map((themeItem) => (
                     <button
-                      key={t.value}
+                      key={themeItem.value}
                       type="button"
-                      onClick={() => setAppTheme(t.value)}
+                      onClick={() => setAppTheme(themeItem.value)}
                       className="flex items-center gap-3 rounded-lg border p-3 text-sm font-medium transition-colors hover:bg-muted"
                     >
-                      <div className="h-6 w-6 rounded-full border" style={{ backgroundColor: t.color }} />
-                      <span className="flex-1 text-left">{t.label}</span>
-                      {appTheme === t.value && <Check className="h-4 w-4 text-primary" />}
+                      <div className="h-6 w-6 rounded-full border" style={{ backgroundColor: themeItem.color }} />
+                      <span className="flex-1 text-left">{themeItem.label}</span>
+                      {appTheme === themeItem.value && <Check className="h-4 w-4 text-primary" />}
                     </button>
                   ))}
                 </div>
@@ -303,7 +305,7 @@ export default function SettingsPage() {
         <div className="mt-4 flex justify-end">
           <Button type="submit" disabled={loading}>
             <Save className="mr-2 h-4 w-4" />
-            {loading ? "Enregistrement..." : "Enregistrer"}
+            {loading ? t("common.saving") : t("common.save")}
           </Button>
         </div>
       </form>

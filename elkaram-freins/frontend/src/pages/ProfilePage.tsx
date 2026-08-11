@@ -5,9 +5,11 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { User, Mail, Shield, Calendar, Clock } from "lucide-react";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 export default function ProfilePage() {
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   if (!user) return null;
 
@@ -36,19 +38,19 @@ export default function ProfilePage() {
         <CardContent className="space-y-4">
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground w-28">Nom d'utilisateur</span>
+            <span className="text-sm text-muted-foreground w-28">{t("users.username")}</span>
             <span className="font-medium">{user.username}</span>
           </div>
           <Separator />
           <div className="flex items-center gap-2">
             <Mail className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground w-28">Email</span>
+            <span className="text-sm text-muted-foreground w-28">{t("common.email")}</span>
             <span className="font-medium">{user.email}</span>
           </div>
           <Separator />
           <div className="flex items-center gap-2">
             <Shield className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground w-28">Rôle</span>
+            <span className="text-sm text-muted-foreground w-28">{t("users.role")}</span>
             <Badge variant={user.role === "admin" ? "default" : "secondary"}>
               {roleLabels[user.role] || user.role}
             </Badge>
@@ -56,7 +58,7 @@ export default function ProfilePage() {
           <Separator />
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground w-28">Membre depuis</span>
+            <span className="text-sm text-muted-foreground w-28">{t("users.memberSince")}</span>
             <span className="font-medium">
               {user.createdAt ? new Date(user.createdAt).toLocaleDateString("fr-FR") : "-"}
             </span>

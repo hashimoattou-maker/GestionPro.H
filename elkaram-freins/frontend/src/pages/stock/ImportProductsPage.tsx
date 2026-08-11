@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { products as productsApi } from "@/lib/api";
 import * as XLSX from "xlsx";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 interface ImportRow {
   reference?: string;
@@ -22,6 +23,7 @@ interface ImportRow {
 
 export default function ImportProductsPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<ImportRow[]>([]);
   const [importing, setImporting] = useState(false);
@@ -44,7 +46,7 @@ export default function ImportProductsPage() {
         const json = XLSX.utils.sheet_to_json<ImportRow>(sheet);
         setPreview(json.slice(0, 10));
       } catch {
-        setError("Erreur de lecture du fichier");
+        setError(t("common.fileReadError"));
       }
     };
     reader.readAsArrayBuffer(f);
@@ -58,7 +60,7 @@ export default function ImportProductsPage() {
       const res = await productsApi.importExcel(file);
       setResult({ imported: res.imported, errors: res.errors });
     } catch {
-      setError("Erreur lors de l'importation");
+      setError(t("common.importError"));
     } finally {
       setImporting(false);
     }
@@ -70,12 +72,12 @@ export default function ImportProductsPage() {
         <Button variant="ghost" size="icon" onClick={() => navigate("/stock/products")}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h2 className="text-2xl font-bold">Importer des Produits</h2>
+        <h2 className="text-2xl font-bold">{t("products.importProducts")}</h2>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Fichier Excel</CardTitle>
+          <CardTitle>{t("common.excelFile")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
@@ -88,7 +90,7 @@ export default function ImportProductsPage() {
           </div>
 
           <p className="text-sm text-muted-foreground">
-            Le fichier doit contenir: reference, name, description, category_name, barcode, purchase_price, selling_price, wholesale_price, stock, min_stock, unit
+            {t("products.requiredColumns")}
           </p>
 
           {error && (
@@ -102,7 +104,7 @@ export default function ImportProductsPage() {
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-green-600 bg-green-50 p-3 rounded-md">
                 <CheckCircle className="h-4 w-4" />
-                <span className="text-sm">{result.imported} importés, {result.errors} ignorés</span>
+                <span className="text-sm">{result.imported} {t("common.imported")}, {result.errors} {t("common.skipped")}</span>
               </div>
             </div>
           )}
@@ -111,18 +113,18 @@ export default function ImportProductsPage() {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <FileSpreadsheet className="h-4 w-4" />
-                <span className="text-sm font-medium">Aperçu ({preview.length} lignes):</span>
+                <span className="text-sm font-medium">{t("common.preview")} ({preview.length} {t("common.rows")}):</span>
               </div>
               <div className="overflow-x-auto border rounded-md">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-muted">
-                      <th className="p-2 text-left">Réf</th>
-                      <th className="p-2 text-left">Nom</th>
-                      <th className="p-2 text-left">Catégorie</th>
-                      <th className="p-2 text-left">PA</th>
-                      <th className="p-2 text-left">PV</th>
-                      <th className="p-2 text-left">Stock</th>
+                      <th className="p-2 text-left">{t("common.ref")}</th>
+                      <th className="p-2 text-left">{t("common.name")}</th>
+                      <th className="p-2 text-left">{t("common.category")}</th>
+                      <th className="p-2 text-left">{t("common.purchasePrice")}</th>
+                      <th className="p-2 text-left">{t("common.sellingPrice")}</th>
+                      <th className="p-2 text-left">{t("common.stock")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -145,7 +147,7 @@ export default function ImportProductsPage() {
           {preview.length > 0 && !result && (
             <Button onClick={handleImport} disabled={importing}>
               <Upload className="mr-2 h-4 w-4" />
-              {importing ? "Importation..." : "Importer"}
+              {importing ? t("common.importing") : t("common.import")}
             </Button>
           )}
         </CardContent>

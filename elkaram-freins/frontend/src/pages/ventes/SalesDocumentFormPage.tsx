@@ -25,6 +25,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { documents as documentsApi, clients as clientsApi, products as productsApi } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
 import type { Document, DocumentLine, Client, Product, DocumentType, PaymentRecord } from "@/types";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 const DOC_TYPE_MAP: Record<string, DocumentType> = {
   devis: "devis",
@@ -35,6 +36,7 @@ const DOC_TYPE_MAP: Record<string, DocumentType> = {
 };
 
 export default function SalesDocumentFormPage() {
+  const { t } = useTranslation();
   const { type, id } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -294,7 +296,7 @@ export default function SalesDocumentFormPage() {
         <Button variant="ghost" size="icon" onClick={() => navigate(`/ventes/${type}`)}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h2 className="text-2xl font-bold">{isEdit ? "Modifier" : "Nouveau"} Document Vente</h2>
+        <h2 className="text-2xl font-bold">{isEdit ? t("common.edit") : t("common.new")} Document Vente</h2>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -304,7 +306,7 @@ export default function SalesDocumentFormPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Client *</Label>
+              <Label>{t("clients.client")} *</Label>
               <Combobox
                 options={clients.map((c) => ({
                   value: String(c.id),
@@ -313,8 +315,8 @@ export default function SalesDocumentFormPage() {
                 }))}
                 value={form.clientId}
                 onChange={(v) => setForm((f) => ({ ...f, clientId: v }))}
-                placeholder="Sélectionner un client"
-                searchPlaceholder="Tapez le nom du client..."
+                placeholder={t("clients.selectClient")}
+                searchPlaceholder={t("clients.typeClientName")}
               />
               {form.clientId && (() => {
                 const selected = clients.find((c) => String(c.id) === form.clientId);
@@ -322,22 +324,22 @@ export default function SalesDocumentFormPage() {
                 return (
                   <div className="space-y-1">
                     <p className={`text-sm ${selected.balance > 0 ? "text-red-600" : "text-green-600"}`}>
-                      Solde : {formatCurrency(selected.balance)}
+                      {t("common.balance")} : {formatCurrency(selected.balance)}
                     </p>
                   </div>
                 );
               })()}
             </div>
             <div className="space-y-2">
-              <Label>Matricule</Label>
-              <Input value={form.matricule} onChange={(e) => setForm((f) => ({ ...f, matricule: e.target.value }))} placeholder="Matricule" />
+              <Label>{t("common.matricule")}</Label>
+              <Input value={form.matricule} onChange={(e) => setForm((f) => ({ ...f, matricule: e.target.value }))} placeholder={t("common.matricule")} />
             </div>
             <div className="space-y-2">
-              <Label>Date</Label>
+              <Label>{t("common.date")}</Label>
               <Input type="date" value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} />
             </div>
             <div className="space-y-2">
-              <Label>Date d'échéance</Label>
+              <Label>{t("common.dueDate")}</Label>
               <Input type="date" value={form.dueDate} onChange={(e) => setForm((f) => ({ ...f, dueDate: e.target.value }))} />
             </div>
           </CardContent>
@@ -345,12 +347,12 @@ export default function SalesDocumentFormPage() {
 
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Lignes du Document</CardTitle>
+            <CardTitle>{t("doc.documentLines")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-2">
               <Input
-                placeholder="Rechercher un produit..."
+                placeholder={t("doc.searchProduct")}
                 value={productSearch}
                 onChange={(e) => searchProduct(e.target.value)}
               />
@@ -371,7 +373,7 @@ export default function SalesDocumentFormPage() {
                     }}
                   >
                     <span className="text-sm">{p.name}</span>
-                    <span className="text-xs text-muted-foreground">{p.reference} - Stock: {p.stock}</span>
+                    <span className="text-xs text-muted-foreground">{p.reference} - {t("doc.stock")}: {p.stock}</span>
                   </div>
                 ))}
               </div>
@@ -381,12 +383,12 @@ export default function SalesDocumentFormPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-16">Réf</TableHead>
-                    <TableHead>Article</TableHead>
-                    <TableHead className="w-16">Qté</TableHead>
-                    <TableHead className="w-24">P.U/HT</TableHead>
-                    <TableHead className="w-24">P.U/TTC</TableHead>
-                    <TableHead className="w-24">Montant TTC</TableHead>
+                    <TableHead className="w-16">{t("common.ref")}</TableHead>
+                    <TableHead>{t("common.article")}</TableHead>
+                    <TableHead className="w-16">{t("common.qty")}</TableHead>
+                    <TableHead className="w-24">{t("common.unitPriceHT")}</TableHead>
+                    <TableHead className="w-24">{t("common.unitPriceTTC")}</TableHead>
+                    <TableHead className="w-24">{t("common.amountTTC")}</TableHead>
                     <TableHead className="w-10"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -400,10 +402,10 @@ export default function SalesDocumentFormPage() {
                     return (
                       <TableRow key={line.id}>
                         <TableCell>
-                          <Input value={line.ref || ""} onChange={(e) => updateLine(index, "ref", e.target.value)} placeholder="Réf" className="w-16 text-xs" />
+                          <Input value={line.ref || ""} onChange={(e) => updateLine(index, "ref", e.target.value)} placeholder={t("common.ref")} className="w-16 text-xs" />
                         </TableCell>
                         <TableCell>
-                          <Input value={line.description} onChange={(e) => updateLine(index, "description", e.target.value)} placeholder="Article" />
+                          <Input value={line.description} onChange={(e) => updateLine(index, "description", e.target.value)} placeholder={t("common.article")} />
                         </TableCell>
                         <TableCell>
                           <Input type="number" value={line.quantity} onChange={(e) => updateLine(index, "quantity", Number(e.target.value))} className="w-16" />
@@ -427,22 +429,22 @@ export default function SalesDocumentFormPage() {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Notes</Label>
+                <Label>{t("common.notes")}</Label>
                 <Textarea value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} />
               </div>
               <div className="space-y-2">
-                <Label>Conditions</Label>
+                <Label>{t("common.terms")}</Label>
                 <Textarea value={form.terms} onChange={(e) => setForm((f) => ({ ...f, terms: e.target.value }))} />
               </div>
             </div>
 
             <div className="border-t pt-4 space-y-2">
               <div className="flex justify-between text-sm">
-                <span>HT</span>
+                <span>{t("common.subtotalHT")}</span>
                 <span>{formatCurrency(subtotal)}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span>Remise</span>
+                <span>{t("common.discount")}</span>
                 <div className="flex items-center gap-2">
                   <Input type="number" value={form.discount} onChange={(e) => setForm((f) => ({ ...f, discount: e.target.value }))} className="w-20 h-8" />
                   <Select value={form.discountType} onValueChange={(v) => setForm((f) => ({ ...f, discountType: v as "percentage" | "fixed" }))}>
@@ -457,16 +459,16 @@ export default function SalesDocumentFormPage() {
                 </div>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span>TVA ({form.taxRate}%)</span>
+                <span>{t("common.vat")} ({form.taxRate}%)</span>
                 <Input type="number" value={form.taxRate} onChange={(e) => setForm((f) => ({ ...f, taxRate: e.target.value }))} className="w-20 h-8" />
               </div>
               <div className="flex justify-between text-sm">
-                <span>Frais de port</span>
+                <span>{t("common.shipping")}</span>
                 <Input type="number" value={form.shipping} onChange={(e) => setForm((f) => ({ ...f, shipping: e.target.value }))} className="w-24 h-8" />
               </div>
               <div className="h-px bg-border" />
               <div className="flex justify-between text-lg font-bold">
-                <span>Total</span>
+                <span>{t("common.total")}</span>
                 <span>{formatCurrency(total)}</span>
               </div>
             </div>
@@ -479,13 +481,13 @@ export default function SalesDocumentFormPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CreditCard className="h-5 w-5" />
-              Ajouter un paiement
+              {t("payment.addPayment")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-3">
               <div className="space-y-2">
-                <Label>Montant *</Label>
+                <Label>{t("common.amount")} *</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -495,7 +497,7 @@ export default function SalesDocumentFormPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Payé sur *</Label>
+                <Label>{t("payment.paidOn")} *</Label>
                 <Input
                   type="datetime-local"
                   value={paymentForm.paymentDate}
@@ -503,7 +505,7 @@ export default function SalesDocumentFormPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Mode de paiement *</Label>
+                <Label>{t("payment.mode")} *</Label>
                 <Select value={paymentForm.paymentMethod} onValueChange={(v) => setPaymentForm((f) => ({ ...f, paymentMethod: v }))}>
                   <SelectTrigger>
                     <SelectValue />
@@ -520,7 +522,7 @@ export default function SalesDocumentFormPage() {
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label>Compte de paiement</Label>
+                <Label>{t("payment.account")}</Label>
                 <Select value={paymentForm.paymentAccount} onValueChange={(v) => setPaymentForm((f) => ({ ...f, paymentAccount: v }))}>
                   <SelectTrigger>
                     <SelectValue />
@@ -534,7 +536,7 @@ export default function SalesDocumentFormPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Note de paiement</Label>
+                <Label>{t("payment.note")}</Label>
                 <Input
                   placeholder="Note..."
                   value={paymentForm.note}
@@ -544,13 +546,13 @@ export default function SalesDocumentFormPage() {
             </div>
             <div className="flex justify-between items-center">
               <div className="text-sm space-y-1">
-                <p>Total : <span className="font-bold">{formatCurrency(total)}</span></p>
-                <p>Payé : <span className="font-bold text-green-600">{formatCurrency(existingDocPaid)}</span></p>
-                <p>Reste à payer : <span className={`font-bold ${existingDocTotal - existingDocPaid > 0 ? "text-red-600" : "text-green-600"}`}>{formatCurrency(Math.max(0, total - existingDocPaid))}</span></p>
+                <p>{t("payment.totalLabel")} <span className="font-bold">{formatCurrency(total)}</span></p>
+                <p>{t("payment.paidLabel")} <span className="font-bold text-green-600">{formatCurrency(existingDocPaid)}</span></p>
+                <p>{t("payment.remaining")} <span className={`font-bold ${existingDocTotal - existingDocPaid > 0 ? "text-red-600" : "text-green-600"}`}>{formatCurrency(Math.max(0, total - existingDocPaid))}</span></p>
               </div>
               <Button onClick={handleAddPayment} disabled={!paymentForm.amount || Number(paymentForm.amount) <= 0}>
                 <CreditCard className="mr-2 h-4 w-4" />
-                Enregistrer le paiement
+                {t("payment.savePayment")}
               </Button>
             </div>
 
@@ -559,11 +561,11 @@ export default function SalesDocumentFormPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Montant</TableHead>
-                      <TableHead>Mode</TableHead>
-                      <TableHead>Compte</TableHead>
-                      <TableHead>Note</TableHead>
+                      <TableHead>{t("common.date")}</TableHead>
+                      <TableHead>{t("common.amount")}</TableHead>
+                      <TableHead>{t("common.method")}</TableHead>
+                      <TableHead>{t("common.account")}</TableHead>
+                      <TableHead>{t("common.note")}</TableHead>
                       <TableHead className="w-10"></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -592,15 +594,15 @@ export default function SalesDocumentFormPage() {
 
       <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={() => navigate(`/ventes/${type}`)}>
-          Annuler
+          {t("common.cancel")}
         </Button>
         <Button variant="secondary" onClick={() => handleSave("brouillon")} disabled={loading}>
           <Save className="mr-2 h-4 w-4" />
-          Brouillon
+          {t("common.draft")}
         </Button>
         <Button onClick={() => handleSave("confirmé")} disabled={loading}>
           <CheckCircle className="mr-2 h-4 w-4" />
-          Valider
+          {t("common.validate")}
         </Button>
       </div>
     </div>
