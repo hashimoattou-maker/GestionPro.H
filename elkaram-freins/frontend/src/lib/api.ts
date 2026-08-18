@@ -249,6 +249,8 @@ export const users = {
   updateUser: (id: string, data: Partial<User>) =>
     api.put<User>(`/users/${id}`, data).then((r) => r.data),
   deleteUser: (id: string) => api.delete(`/users/${id}`).then((r) => r.data),
+  getLogins: (limit?: number) =>
+    api.get<{ id: number; user_id: string; username: string; fullName: string; action: string; details: string; created_at: string }[]>("/users/logins", { params: { limit } }).then((r) => r.data),
 };
 
 export const stock = {

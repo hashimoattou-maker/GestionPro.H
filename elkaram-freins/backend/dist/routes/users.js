@@ -19,6 +19,21 @@ router.get('/', async (req, res) => {
         res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
     }
 });
+router.get('/logins', async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 50;
+        const [rows] = await database_1.default.execute(`SELECT al.id, al.user_id, u.username, u.full_name as fullName, al.action, al.details, al.created_at
+       FROM audit_log al
+       LEFT JOIN users u ON u.id = al.user_id
+       WHERE al.action = 'login'
+       ORDER BY al.created_at DESC
+       LIMIT ?`, [String(limit)]);
+        res.json(rows);
+    }
+    catch (err) {
+        res.status(500).json({ error: 'Erreur lors de la récupération de l\'historique des connexions' });
+    }
+});
 router.post('/', async (req, res) => {
     try {
         if (req.user.role !== 'admin') {
