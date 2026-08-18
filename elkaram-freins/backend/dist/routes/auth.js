@@ -9,7 +9,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const database_1 = __importDefault(require("../database"));
 const auth_1 = require("../middleware/auth");
 const router = (0, express_1.Router)();
-const JWT_SECRET = 'elkaram-jwt-secret-2024';
+const JWT_SECRET = process.env.JWT_SECRET || 'elkaram-freins-sarl-2026-gestion26';
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;

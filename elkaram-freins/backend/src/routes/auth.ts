@@ -5,7 +5,7 @@ import pool from '../database';
 import { authenticate, AuthRequest } from '../middleware/auth';
 
 const router = Router();
-const JWT_SECRET = 'elkaram-jwt-secret-2024';
+const JWT_SECRET = process.env.JWT_SECRET || 'elkaram-freins-sarl-2026-gestion26';
 
 router.post('/login', async (req: AuthRequest, res: Response) => {
   try {

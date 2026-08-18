@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authenticate = authenticate;
 exports.requireRole = requireRole;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const JWT_SECRET = 'elkaram-jwt-secret-2024';
+const JWT_SECRET = process.env.JWT_SECRET || 'elkaram-freins-sarl-2026-gestion26';
 function authenticate(req, res, next) {
     try {
         const authHeader = req.headers.authorization;
